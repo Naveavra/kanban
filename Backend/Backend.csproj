@@ -6,4 +6,8 @@
     <AssemblyName>IntroSE.Kanban.Backend</AssemblyName>
     <OutputType>Library</OutputType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="BusinessLayer\" />
+  </ItemGroup>
 </Project>
