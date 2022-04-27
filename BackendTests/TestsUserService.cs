@@ -9,9 +9,8 @@ namespace BackendTests
 {
     internal class TestsUserService
     {
-        /*
-        private IntroSE.Kanban.Backend.ServiceLayer.UserService use;
-        public TestsUserService(IntroSE.Kanban.Backend.ServiceLayer.UserService use){this.use = use;}
+        //private UserService use;
+        //public TestsUserService(UserService use){this.use = use;}
         public void testRegister()
         {
             string resultRegister1 = use.register("naveAndMikiForever@gmail.com", "danhakatan23");
@@ -73,38 +72,12 @@ namespace BackendTests
                 Console.WriteLine("OK");
 
         }
-        public void testGetUser()
-        {
-            string resultTest = use.login("naveAndMikiForever@gmail.com", "danhakatan23");
-            string borat = use.getUser("naveAndMikiForever@gmail.com");
-            if (!borat.Equals("Great success"))
-            {
-                Console.WriteLine("borat exist but return null");
-            }
-            else
-            {
-                Console.WriteLine("OK");
-            }
-            use.logout("naveAndMikiForever@gmail.com");
-            borat = use.getUser("naveAndMikiForever@gmail.com");
-            if (borat.Equals("Great success"))
-            {
-                Console.WriteLine("borat not exist but return success");
-            }
-            else
-            {
-                Console.WriteLine("OK");
-            }
-
-        }
         public void runTests()
         {
             testRegister();
             testLogin();
             testLogout();
-            testGetUser();
         }
-        */
     }
 }
 
