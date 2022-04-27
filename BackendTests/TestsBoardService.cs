@@ -4,20 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//namespace IntroSE.Kanban.Backend.ServiceLayer.boardService;
+using IntroSE.Kanban.Backend.ServiceLayer.boardService;
 
 
 namespace BackendTests
 {
-    internal class TestsBoardService
+    public class TestsBoardService
     {
         private BoardService boardService = new BoardService();
         private UserService userSer = new UserService();
       
         public void testAddTask()
         {
-            String s = boardService.AddTask("20.4.2022");
-            string resultTest = boardService.AddTask("miki@gmail.com", "b", "work 1", " build search engine in binary", s);
+            string resultTest = boardService.AddTask("miki@gmail.com", "b", "work 1", " build search engine in binary", "20.4.2022");
             if (resultTest.Equals("success"))
             {
                 Console.WriteLine("OK");
@@ -26,7 +25,7 @@ namespace BackendTests
             {
                 Console.WriteLine("fail, all arguments are correct but didnt success");
             }
-            string resultTest1 = boardService.AddTask("miki@gmail.", "b", "work 1", " build search engine in binary", s);
+            string resultTest1 = boardService.AddTask("miki@gmail.", "b", "work 1", " build search engine in binary", "20.4.2022");
             if (resultTest.Equals("success"))
             {
                 Console.WriteLine("fail, there is no such email");
@@ -35,7 +34,7 @@ namespace BackendTests
             {
                 Console.WriteLine("fail successefuly");
             }
-            string resultTest2 = boardService.AddTask("miki@gmail.com", "c", "work 1", " build search engine in binary", s);
+            string resultTest2 = boardService.AddTask("miki@gmail.com", "c", "work 1", " build search engine in binary", "20.4.2022");
             if (resultTest.Equals("success"))
             {
                 Console.WriteLine("fail, there is no such board");
@@ -44,7 +43,7 @@ namespace BackendTests
             {
                 Console.WriteLine("fail successefuly");
             }
-            string resultTest3 = boardService.AddTask("miki@gmail.com", "b", "work 1", " build search engine in binary", s);
+            string resultTest3 = boardService.AddTask("miki@gmail.com", "b", "work 1", " build search engine in binary", "20.4.2022");
             if (resultTest.Equals("success"))
             {
                 Console.WriteLine("fail, dueDate cannot be in the past");
@@ -102,8 +101,7 @@ namespace BackendTests
         }
         public void testToInProgress()
         {
-            String s = boardService.AddTask("20.4.2022");
-            boardService.AddTask("miki@gmail.com", "b", "work 1", " build search engine in binary", s);
+            boardService.AddTask("miki@gmail.com", "b", "work 1", " build search engine in binary", "20.4.2022");
             string resultTest = boardService.ToInProgress("miki@gmail.com");
             if (resultTest.Equals("success"))
             {
@@ -175,8 +173,7 @@ namespace BackendTests
        
         public void testUpdateTaskDue()
         {
-            String s = boardService.UpdateTaskDue("22/8/2030");
-            string resultTest = boardService.UpdateTaskDue("miki@gmail.com", "b", 1, 0, s);
+            string resultTest = boardService.UpdateTaskDue("miki@gmail.com", "b", 1, 0, "23/6/2043");
             if (resultTest.Equals("success"))
             {
                 Console.WriteLine("Ok");
@@ -185,8 +182,7 @@ namespace BackendTests
             {
                 System.Console.WriteLine("fail,all arguments were correct but failed");
             }
-            //String s = boardService.AddTask("20.4.2022");
-            string resultTes2 = boardService.UpdateTaskDue("miki@gmail", "b", 1, 0, s);
+            string resultTes2 = boardService.UpdateTaskDue("miki@gmail", "b", 1, 0, "23/6/2043");
             if (resultTest.Equals("success"))
             {
                 Console.WriteLine("fail, there is no such email");

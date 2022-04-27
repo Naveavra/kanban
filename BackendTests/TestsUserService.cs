@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using IntroSE.Kanban.Backend.ServiceLayer;
+using IntroSE.Kanban.Backend.ServiceLayer;
 
 namespace BackendTests
 {
-    internal class TestsUserService
+    public class TestsUserService
     {
-        //private UserService use;
-        //public TestsUserService(UserService use){this.use = use;}
+        private UserService use;
+        public TestsUserService(UserService use){this.use = use;}
         public void testRegister()
         {
             string resultRegister1 = use.register("naveAndMikiForever@gmail.com", "danhakatan23");
