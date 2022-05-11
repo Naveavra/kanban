@@ -17,7 +17,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="desc">Description of the task.</param>
         /// <param name="dueDate">the task's due date</param>
         /// <returns>The string "successfully added the task", unless an error occurs</returns>
-        public string AddTask(string email, string boradname, string title,
+        public string AddTask(string email, string boradname, string title, //T
             string desc, string dueDate)
         {
             throw new NotImplementedException();
@@ -33,7 +33,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="dueDate">the task's due date</param>
         /// <param name="TaskID">the task's id</param>
         /// <returns>The string "successfully added the task", unless an error occurs</returns>
-        public string RemoveTask(string email, string boradname, string title,
+        public string RemoveTask(string email, string boradname, string title, //T
             string desc, string dueDate,int TaskID)
         {
             throw new NotImplementedException();
@@ -101,7 +101,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="boardname"></param>
         /// <param name="taskID"></param>
         /// <returns>response - string representaion of the task (toString), unless an error occures.</returns>
-        public string GetTask(string email, string boardname, int taskID)
+        public string GetTask(string email, string boardname, int taskID) 
         {
             throw new NotImplementedException();
         }
