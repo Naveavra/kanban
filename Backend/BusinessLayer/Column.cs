@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntroSE.Kanban.Backend.ServiceLayer;
+using IntroSE.Kanban.Backend.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 {
     internal class Column
     {
+        log4net.ILog logger = Log.GetLogger();
         private string ColumnName;
         private int limit = -1;
         private Dictionary<int, Task> Tasks;
@@ -23,10 +26,25 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             return limit;
         }
-
-        public void SetColumnLimit(int limit)
+        public bool canAdd()
         {
-            this.limit = limit;
+            if (Tasks.Count < limit || limit == -1)
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool SetColumnLimit(int limit)
+        {
+            if (limit < this.Tasks.Count || limit % 1 !=0)
+            {
+                return false;
+            }
+            else
+            {
+                this.limit = limit;
+                return true;
+            }
         }
 
         public string getName()
@@ -39,16 +57,24 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             ColumnName = name;
         }
 
-        public string AddTask(Task task)
+        public Response AddTask(Task task)
         {
             if ( Tasks.Count() < limit || limit < 0) //if the limit is -1 we can add all the tasks we want
             {
-                Tasks.Add(task.gettaskID(), task);
-                return "Success";
+                if (!Tasks.ContainsKey(task.gettaskID()))
+                {
+                    Tasks.Add(task.gettaskID(), task);
+                    logger.Info("Task: "+task.gettitle()+" added Successfully");
+                    return new Response("Success");
+                }
+                logger.Warn("Task ID: "+task.gettaskID()+" Already exists.");
+                return new Response("Task id already exists",true);
+                
             }
             else
             {
-                return "this column allready reached max capacity. Please get your shit together blood";
+                logger.Warn("This column has reached its' max capacity. Please get your shit together blood.");
+                return new Response("this column already reached max capacity. Please get your shit together blood", true);
             }
         }
 
@@ -86,7 +112,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         override
         public string ToString()
         {
-            string res = "";
+            string res = "The tasks in the " + ColumnName + " are:\n";
             foreach (Task task in Tasks.Values)
             {
                 res += task.ToString() + "\n"; 

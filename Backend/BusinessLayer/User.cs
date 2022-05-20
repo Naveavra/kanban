@@ -21,6 +21,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             logged = true;
         }
+
+        public bool Logged()
+        {
+            return logged;
+        }
         public void Logout()
         {
             logged = false;
@@ -32,7 +37,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 return "passwords are the same";
             }
-            this.password = newPW;
+            password = newPW;
             return "Success";
          
         }

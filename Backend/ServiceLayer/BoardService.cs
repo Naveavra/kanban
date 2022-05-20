@@ -1,13 +1,17 @@
+using IntroSE.Kanban.Backend.BusinessLayer;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardService
     {
+        BoardControl boardControl;
         /// <summary>
         /// 
         /// </summary> Method that will add a task to a certain board
@@ -16,11 +20,121 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="title">the task's title.</param>
         /// <param name="desc">Description of the task.</param>
         /// <param name="dueDate">the task's due date</param>
-        /// <returns>The string "successfully added the task", unless an error occurs</returns>
-        public string AddTask(string email, string boradname, string title, //T
-            string desc, string dueDate)
+        /// <returns>Response with user-email, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        /// 
+        public BoardService()
         {
-            throw new NotImplementedException();
+           boardControl = new BoardControl();
+        }
+
+/*        private static BoardService instance = null;
+*/
+/*        public static BoardService Instance { get { return instance ?? (instance = new BoardService()); } }
+*/        public string AddTask(string email, string boradname, string title,string desc, DateTime dueDate)
+        {
+            Response res = boardControl.AddTask(email, boradname, title, desc, dueDate);
+            if (res.ErrorOccured())
+            {
+                return res.Serialize();
+            }
+            return new Response(email).Serialize();
+            
+        }
+
+        /// <returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string AddBoard(string email, string name)
+        {
+            Response response = boardControl.AddBoard(email, name);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
+        }
+
+        /// <returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
+
+        public string UpdateTaskDueDate(string email, string boardName, int taskID, DateTime newDate)
+        {
+            Response response = boardControl.UpdateTaskDue(email, boardName, taskID, newDate);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
+        }
+
+
+        /// <returns>Response with  a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string GetColumn(string email, string boardName, int columnOrdinal)
+        {
+            Response response = boardControl.GetColumn(email, boardName, columnOrdinal);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            Response response1 = boardControl.GetColumnForReal(email, boardName, columnOrdinal);
+            return response1.Serialize();
+        }
+
+        /// <returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string UpdateTaskTitle(string email, string boardName, int taskID, string newTitle)
+        {
+            Response response = boardControl.UpdateTaskTitle(email, boardName, taskID, newTitle);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
+        }
+
+
+        /// <summary>
+        /// updating the task description
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="taskID"></param>
+        /// <param name="newDate"></param>
+        ///<returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
+
+        public string UpdateTaskDesc(string email, string boardName, int taskID, string NewDescription)
+        {
+            Response response = boardControl.UpdateTaskDesc(email, boardName, taskID, NewDescription);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
+        }
+
+        /// <returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
+        
+        public string AdvanceTask(string email, string boardName, int taskId)
+        {
+            Response response = boardControl.AdvanceTask(email, boardName, taskId);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
+        }
+
+        /// <summary>
+        /// this method will remove a user's board
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        ///<returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string RemoveBoard(string email, string boardName)
+        {
+            Response response = boardControl.RemoveBoard(email, boardName);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
+
         }
 
         /// <summary>
@@ -33,11 +147,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="dueDate">the task's due date</param>
         /// <param name="TaskID">the task's id</param>
         /// <returns>The string "successfully added the task", unless an error occurs</returns>
-        public string RemoveTask(string email, string boradname, string title, //T
+     /*   public string RemoveTask(string email, string boradname, string title, //T
             string desc, string dueDate,int TaskID)
         {
             throw new NotImplementedException();
-        }
+        }*/
 
         /// <summary>
         /// 
@@ -48,7 +162,24 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// ,unlees an error occures.</returns>
         public string GetBoard(string email, string boardname)
         {
-            throw new NotImplementedException();
+            Response res = boardControl.GetBoard(email, boardname);
+            if (res.ErrorOccured())
+            {
+                return res.Serialize();
+            }
+            return new Response(email).Serialize();
+        }
+
+
+        /// <returns>Response with  a list of the in progress tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string InProgressTasks(string email)
+        {
+            Response response = boardControl.GetInProgressChecker(email);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return boardControl.GetColumnsByName(email, "InProgress").Serialize();
         }
         /// <summary>
         /// this method will return all the tasks in the InProgress column of the board
@@ -117,18 +248,25 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             throw new NotImplementedException();
         }
-        /// <summary>
-        /// this method will determine the max number of tasks this column can contain 
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="boardname"></param>
-        /// <param name="taskID"></param>
-        /// <param name="limit">max tasks for this column</param>
-        /// <returns>The string "successfully limited the column", unless an error occurs</returns>
-        public string LimitColumn(string email, string boardname, int taskID, int limit)
+
+
+        public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
-            throw new NotImplementedException();
+            Response response = boardControl.LimitColumn(email, boardName, columnOrdinal, limit);
+            if (response.ErrorOccured())
+            {
+                return response.Serialize();
+            }
+            return "{}";
         }
+
+        /// <returns>Response with column limit value, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string GetColumnLimit(string email, string boardName, int columnOrdinal)
+        {
+            Response response = boardControl.GetCloumnLimit(email, boardName, columnOrdinal);
+            return response.Serialize();
+        }
+
         /// <summary>
         /// update the due date of the task
         /// </summary>
@@ -138,22 +276,15 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="newDate"></param>
         /// <returns>The string "successfully updated", unless an error occurs</returns>
 
-        public string UpdateTaskDue(string email, string boardName, int taskID, string newDate)
+
+        /// <returns>Response with column name value, unless an error occurs (see <see cref="GradingService"/>)</returns>
+
+        public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            Response response = boardControl.GetColumnName(email, boardName, columnOrdinal);
+            return response.Serialize();
         }
-        /// <summary>
-        /// updating the task description
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="boardName"></param>
-        /// <param name="taskID"></param>
-        /// <param name="newDate"></param>
-        /// <returns>The string "successfully updated", unless an error occurs.</returns>
-        public string UpdateTaskDesc(string email, string boardName, int taskID, string newDate)
-        {
-            throw new NotImplementedException();
-        }
+
 
         /// <summary>
         /// this method will update the task title
@@ -164,22 +295,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="newTitle"></param>
         /// <returns>The string "successfully updated", unless an error occurs.</returns>
 
-        public string UpdateTaskTitle(string email, string boardName, int taskID, string newTitle)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// this method will remove a user's board
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="boardName"></param>
-        /// <returns>The string "board removed successfully" unless an error ocuures.</returns>
-        public string RemoveBoard(string email, string boardName)
-        {
-            throw new NotImplementedException();
-
-        }
 
         /// <summary>
         /// this method will return all the user's boards names

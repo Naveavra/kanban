@@ -8,31 +8,31 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 {
     internal class Task
     {
-        private string title;
-        private string description;
+        public int Id { get; }
+        public DateTime CreationTime { get; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         //private string currentBoard;
-        private int taskID;
         private int Status;
-        private string dueDate;
-        private DateTime creationDate;
+        public DateTime DueDate { get; set; }
 
-        public Task(string title, string description, string dueDate,int taskID)
+        public Task(string title, string description, DateTime dueDate,int taskID)
         {
-            this.title = title;
-            this.description = description;
-            this.dueDate = dueDate;
+            this.Title = title;
+            this.Description = description;
+            this.DueDate = dueDate;
             //this.currentBoard = currentBoard;
-            this.taskID = taskID;
-            creationDate = DateTime.Now.Date;
+            this.Id = taskID;
+            CreationTime = DateTime.Now.Date;
 
         }
-        public int gettaskID(){return this.taskID; }
-        public string gettitle() { return this.title; }
-        public string getDescription() { return this.description; } 
+        public int gettaskID(){return this.Id; }
+        public string gettitle() { return this.Title; }
+        public string getDescription() { return this.Description; } 
         //public string getCurrentBoard() { return this.currentBoard; }   
-        public string getdueDate() { return this.dueDate; }
-        public string getCreationTime() { return this.creationDate.ToString();  ; }
-        public override string ToString()
+        public DateTime getdueDate() { return this.DueDate; }
+        public string getCreationTime() { return this.CreationTime.ToString();  ; }
+/*        public override string ToString()
         {
             string status1 = "Backlog";
             string status2 = "In Progress";
@@ -50,7 +50,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                               "\n" + "The due time: " + this.dueDate + "\n";
             return result;
             
-        }
+        }*/
 
         public bool EditTaskDesc(string newDesc)
         {
@@ -58,17 +58,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 return false;
             }
-            description = newDesc;
+            Description = newDesc;
             return true;
         }
 
-        internal bool EditTaskDueDate(string newDue)
+        internal bool EditTaskDueDate(DateTime newDue)
         {
             if (this.Status.ToString().Equals("Done"))
             {
                 return false;
             }
-            dueDate = newDue;
+            DueDate = newDue;
             return true;
         }
 
@@ -78,12 +78,18 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 return false;
             }
-            title = newTitle;
+            Title = newTitle;
             return true;
         }
         internal void ChangeStatus(int Status)
         {
             this.Status = Status;
+        }
+
+        public override string ToString()
+        {
+            return  "Task title: " + Title + "\nTask Due Date: " + "\nTask ID: " + Id + "\nTask Description: " + 
+                "\nCreated in: " + CreationTime.ToString();
         }
     }
 }
