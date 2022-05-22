@@ -139,7 +139,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return GetBoard(email, boardName);
         }
 
-        public bool UserBoardsExist(string email, string boardname)
+/*        public bool UserBoardsExist(string email, string boardname)
         {
             bool exist = false;
             if (boards.ContainsKey(email))
@@ -153,7 +153,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 }
             }
             return exist;
-        }
+        }*/
         /// <summary>
         /// this function will go all the way just to make suer everything is ok then we will call the real get column
         /// </summary>
