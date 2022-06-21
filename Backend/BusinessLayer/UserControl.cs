@@ -1,4 +1,6 @@
-﻿using IntroSE.Kanban.Backend.Utility;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer;
+using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+using IntroSE.Kanban.Backend.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,77 +13,99 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     {
         private Dictionary<string, User> users; //<email, User>
         log4net.ILog logger = Log.GetLogger();
+        private UserMapper userMapper { get; set; }
         private Validator validator;
         public UserControl() {
             users = new Dictionary<string, User>();
             validator = Validator.Instance;
-            validator.reset();
+            userMapper = new UserMapper();
+/*            UserMapper.loadData();
+*/            validator.reset();
         }
 
  /*       private static UserControl instance = null;
         public static UserControl Instance { get { return instance ?? (instance = new UserControl()); } }*/
         
-
-        public Response Login(string email,string pw)
+        public Response LoadData()
         {
-            //checks if a user is already logged in from the users that are logged in and not from all the users that we have on the db
-            if (users.ContainsKey(email)){
-                if (users[email].Logged())
-                {
-
-                    return new Response("User is allready logged in", true);
-                }
-                else
-                {
-                    if (users[email].getPassword() == pw)
-                    {
-                        users[email].Login();
-                        logger.Info("The user " + email + " Logged In Successfully");
-                        return new Response(email);
-                    }
-                }
-                logger.Warn("Password is incorrect. email: "+email+" has failed to login");
-                return new Response("Password is incorrect", true);
-            }
-            logger.Warn("Error. email: " + email + " doesn't exist");
-            return new Response("Email doesn't exist.", true);
-        }
-        
-        public Response Register(string email, string pw) 
-        {
-            if(validator.ValidteRegistraion(email, pw))
+            if (users.Count != 0)
             {
-                User user = new User(email, pw);
-                users.Add(email, user);
-                logger.Info("User: " + email + ", Registered Successfully");
-                return new Response("Successfully registred new user");
-
+                return new Response("data is loaded already", true);
+                
             }
-            return new Response("Registration Failed", true);    
+            users.Clear();
+            userMapper.loadData();
+            foreach(UserDTO dto in userMapper.idMap.Values) 
+            {
+                users.Add(dto.email, new User(dto.email, dto.password));
+            }
+            /*List<string> list = new List<string>();
+            foreach (string key in users.Keys)
+            {
+                list.Add(key);
+            }*/
+            validator.insertUsersFromDB(users);
+            return new Response("{}");
+        }
+        public void Login(string email, string pw)
+        {
+            LoadData();
+            //checks if a user is already logged in from the users that are logged in and not from all the users that we have on the db
+            if (users.ContainsKey(email))
+            {
+                users[email].Login(pw);
+            }
+            else 
+            { 
+                throw new Exception($"Email: {email} Doesn't exist.");
+                logger.Warn("Error. email: " + email + " doesn't exist"); 
+            }
+        }
+
+
+
+
+        public void Register(string email, string pw)
+        {
+            
+            LoadData();
+            validator.ValidateRegistraion(email, pw);
+            User user = new User(email, pw);
+            //users.Add(email, user);
+            userMapper.addData(new UserDTO(email, pw, false));
+            logger.Info("User: " + email + ", Registered Successfully");
+            
             
         }
 
-        public Response Logout(string email)
+        public void Logout(string email)
         {
             if (!users.ContainsKey(email))
             {
                 logger.Warn("User doesn't exist. Email: "+email);
-                return new Response("User dosen't exist", true);
+                throw new Exception("User doesn't exist");
             }
-            else
+            users[email].Logout();
+                        
+        }
+
+        internal Response DeleteData()
+        {
+            /*Dictionary<string, UserDTO> usrs= new Dictionary<string, UserDTO>();
+            foreach (User user in users.Values)
             {
-                if (users[email].Logged()) {
-                    users[email].Logout();
-                    logger.Info("User successfully logged out.");
-                    return new Response("Succefully logged out");
-                }
-                logger.Warn("Error: Cannot logout, User is not logged in. Email: " + email);
-                return new Response("User isn't logged in", true);
+                usrs.Add(user.email,new UserDTO(user.email,user.getPassword(),user.Logged()));
             }
+            return userMapper.deleteData(usrs);*/
+            users.Clear();
+            userMapper.deleteData();
+//            userMapper.setLoaded(false);
+            return new Response("{}");
         }
 
         internal bool Logged(string email)
         {
+            userMapper.loadData();
             if (users.ContainsKey(email))
             {
                 return users[email].Logged();
@@ -90,6 +114,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 return false;
             }
+        }
+
+        internal bool Registered(string email)
+        {
+            userMapper.loadData();
+            if (!userMapper.getUsers().ContainsKey(email))
+            {
+                return false;
+                throw new Exception($"User isn't registered, Email: {email}");
+            }
+            return true;
         }
     }
 }

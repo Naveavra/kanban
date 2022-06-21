@@ -1,4 +1,6 @@
-﻿using IntroSE.Kanban.Backend.ServiceLayer;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer;
+using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+using IntroSE.Kanban.Backend.ServiceLayer;
 using IntroSE.Kanban.Backend.Utility;
 using System;
 using System.Collections.Generic;
@@ -14,12 +16,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         private string ColumnName;
         private int limit = -1;
         private Dictionary<int, Task> Tasks;
+        private TaskMapper Mapper { get; }
 
         public Column(string name, int limit = -1)
         {
             this.ColumnName = name;
             this.limit = limit;
             this.Tasks = new Dictionary<int, Task>();
+            Mapper = TaskMapper.Instance;
         }
 
         public int getlimit()
@@ -36,15 +40,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
         public bool SetColumnLimit(int limit)
         {
-            if (limit < this.Tasks.Count || limit % 1 !=0)
+            if (limit < Tasks.Count || limit % 1 !=0)
             {
                 return false;
             }
-            else
-            {
-                this.limit = limit;
-                return true;
-            }
+            this.limit = limit;
+            return true;
         }
 
         public string getName()
@@ -57,24 +58,25 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             ColumnName = name;
         }
 
-        public Response AddTask(Task task)
+        public void AddTask(Task task,int boardID,string boardOwner)
         {
-            if ( Tasks.Count() < limit || limit < 0) //if the limit is -1 we can add all the tasks we want
+            if ( Tasks.Count() < limit || limit == -1) //if the limit is -1 we can add all the tasks we want
             {
                 if (!Tasks.ContainsKey(task.gettaskID()))
                 {
                     Tasks.Add(task.gettaskID(), task);
+                    task.setDTO( new TaskDTO(task, boardID, 0, boardOwner));
+                    Mapper.addData(task.DTO);
                     logger.Info("Task: "+task.gettitle()+" added Successfully");
-                    return new Response("Success");
+                    return;
                 }
                 logger.Warn("Task ID: "+task.gettaskID()+" Already exists.");
-                return new Response("Task id already exists",true);
-                
+                throw new Exception($"Task ID: {task.gettaskID()} already exists.");                
             }
             else
             {
                 logger.Warn("This column has reached its' max capacity. Please get your shit together blood.");
-                return new Response("this column already reached max capacity. Please get your shit together blood", true);
+                throw new Exception("This column has reached its' max capacity. Please get your shit together blood.");
             }
         }
 

@@ -28,7 +28,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
         public string Serialize()
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+            return JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }) ;
 
         }
         public bool ErrorOccured()

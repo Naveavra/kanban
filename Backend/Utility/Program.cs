@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace IntroSE.Kanban.Backend.Utility
     {
         public static void Main(String[] args)
         {
-
+            DBConnector conn = DBConnector.Instance; 
         }
     }
 }
