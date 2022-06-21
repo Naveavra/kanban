@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,25 +8,39 @@ using System.Threading.Tasks;
 
 namespace IntroSE.Kanban.Backend.BusinessLayer
 {
+    enum Status
+    {
+        Backlog,
+        Inprogress,
+        Done
+    }
+    [Serializable]
     internal class Task
     {
         public int Id { get; }
-        public DateTime CreationTime { get; }
+        public DateTime CreationTime { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        //private string currentBoard;
-        private int Status;
         public DateTime DueDate { get; set; }
-
+        public string Assignee { get; private set; }
+        public Status Status { get; set; }
+        [JsonIgnore] //i think that if we delete the get ans set the json will skip it 
+        public TaskDTO? DTO { get;private set; }
         public Task(string title, string description, DateTime dueDate,int taskID)
         {
+            this.Status = Status.Backlog;
             this.Title = title;
             this.Description = description;
             this.DueDate = dueDate;
             //this.currentBoard = currentBoard;
             this.Id = taskID;
+            Assignee = "";
             CreationTime = DateTime.Now.Date;
 
+        }
+        public void setDTO(TaskDTO t)
+        {
+            this.DTO = t;
         }
         public int gettaskID(){return this.Id; }
         public string gettitle() { return this.Title; }
@@ -51,39 +67,54 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return result;
             
         }*/
-
-        public bool EditTaskDesc(string newDesc)
+        public void setAssignee(string assignee)
         {
-            if(this.Status.ToString().Equals("Done"))
+            this.Assignee = assignee;
+            if (DTO != null)
             {
-                return false;
+                DTO.Assignee = assignee;
             }
+        }
+        public void EditTaskDesc(string email,string newDesc)
+        {
+            if(this.Status.ToString().Equals("Done") || Assignee!=email)
+            {
+                throw new Exception("User is not assigned to this Task.");
+            }
+            DTO.Description = newDesc;
             Description = newDesc;
-            return true;
         }
+    
 
-        internal bool EditTaskDueDate(DateTime newDue)
+    internal void EditTaskDueDate(string email,DateTime newDue)
         {
-            if (this.Status.ToString().Equals("Done"))
+            if (DateTime.Compare(newDue, DateTime.Now) < 0)
+                throw new Exception("Invalid update task due, date given has already passed");
+            if (this.Status.ToString().Equals("Done")|| Assignee!= email)
             {
-                return false;
+                throw new Exception("User is not assigned to this task");
             }
+            DTO.DueDate = newDue;
             DueDate = newDue;
-            return true;
         }
 
-        internal bool EditTaskTitle(string newTitle)
+        internal void EditTaskTitle(string email,string newTitle)
         {
-            if(this.Status.ToString().Equals("Done"))
+            if(this.Status.ToString().Equals("Done")||Assignee!=email)
             {
-                return false;
+                throw new Exception("User isn't assigned to this task");
             }
+            DTO.Title = newTitle;
             Title = newTitle;
-            return true;
         }
-        internal void ChangeStatus(int Status)
+        internal void ChangeStatus(int Stat)
         {
-            this.Status = Status;
+            switch(Stat)
+                {
+                case 0: this.Status = Status.Backlog; break;
+                case 1: this.Status = Status.Inprogress; break;
+                case 2: this.Status = Status.Done; break;
+            }
         }
 
         public override string ToString()

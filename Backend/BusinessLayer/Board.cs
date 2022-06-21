@@ -1,4 +1,6 @@
-﻿using IntroSE.Kanban.Backend.ServiceLayer;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer;
+using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+using IntroSE.Kanban.Backend.ServiceLayer;
 using IntroSE.Kanban.Backend.Utility;
 using System;
 using System.Collections.Generic;
@@ -10,14 +12,18 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 {
     internal class Board
     {
+        int boardID;
         log4net.ILog logger = Log.GetLogger();
-        string name;
-        List<Column> columns;
-        string boardowner;
-        int taskID; //task counter per board hold the index of the last task we added
+        public string name { get; set; }
+        public List<Column> columns { get; set; }
+        public string boardowner { get; set; }
+        public ColumnMapper Mapper { get; }
+        public int taskID{ get; set; } //task counter per board hold the index of the last task we added
 
-        public Board(string boardowner, string boardname)
+        public Board(string boardowner, string boardname,int boardID)
         {
+            this.boardID = boardID;
+            Mapper = ColumnMapper.Instance;
             this.boardowner = boardowner;
             this.name = boardname;
             this.taskID = 0;
@@ -25,6 +31,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             Column backlog = new Column("backlog");
             Column inProgress = new Column("in progress");
             Column done = new Column("done");
+            Mapper.addData(new ColumnDTO(backlog,0,boardID));
+            Mapper.addData(new ColumnDTO(inProgress,1,boardID));
+            Mapper.addData(new ColumnDTO(done,2,boardID));
             columns.Add(backlog);
             columns.Add(inProgress);    
             columns.Add(done);
@@ -33,55 +42,115 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             // column[0]=backlog, [1]=inprogress, [2]=isdone
 
         }
-
-
-        public Response AddTask(string title, string desc, DateTime dueDate, int ID) //we allready passs the validator stage in the boardservice 
+        public List<Task> getAssignedInProgress(string email)
         {
-            Task task = new Task(title, desc, dueDate, ID);
+            List<Task> assigned = new List<Task>();
+            foreach(Task task in columns[1].GetTasks().Values)
+            {
+                if(task.Assignee == email)  
+                    assigned.Add(task);
+            }
+            return assigned;
+        }
+
+        
+        public void AddTask(string title, string desc, DateTime dueDate) //we allready passs the validator stage in the boardservice 
+        {
+            Task task = new Task(title, desc, dueDate, GetAndIncrement());
             task.ChangeStatus(1);
-            return columns[0].AddTask(task);
-        }
-
-/*        public string ToInProgress(int taskID)
-        {
-            Task task;
-            if ( columns[0].GetTask(taskID) != null)
+            try
             {
-                task = columns[0].GetTask(taskID);
-                task.ChangeStatus(2);
-                columns[0].RemoveTask(taskID);
-                return columns[1].AddTask(task);
-            }
-            else
+                columns[0].AddTask(task, this.boardID, this.boardowner);
+            }catch(Exception ex)
             {
-                return "task not found";
+                GetAndDecrement();
+                throw new Exception(ex.Message);
             }
         }
-
-        public string ToIsDone(int taskID)
+        public int GetAndIncrement() //newfunction
         {
-            Task task;
-            if (columns[1].GetTask(taskID) != null)
-            {
-                task = columns[1].GetTask(taskID);
-                task.ChangeStatus(3);
-                columns[1].RemoveTask(taskID);
-                return columns[2].AddTask(task);
-            }
-            else
-            {
-                return "task not found";
-            }
-        }*/
-
-        public Response LimitColumn(int colomunIDX, int limit) //can we assume the user will not limit the column after 
-            //he already added tasks?
+            int previd = taskID;
+            taskID++;
+            BoardMapper.Instance.Update(boardID,"taskID",taskID);
+            return previd;
+        }
+        public int GetAndDecrement() //newfunction
         {
-            if (columns[colomunIDX].SetColumnLimit(limit))
+            int previd = taskID;
+            taskID--;
+            BoardMapper.Instance.Update(boardID, "taskID", taskID);
+            return previd;
+        }
+        internal Response AssignTask(string email,int columnOrdinal, int taskId, string emailAssignee)
+        {
+            Task task = columns[columnOrdinal].GetTask(taskId);
+            if(task != null)
             {
-                return new Response("{}");
+                if (task.Assignee == email || task.Assignee == "")
+                {
+                    task.setAssignee(emailAssignee);
+                    return new Response("{}");
+                }
+                return new Response("Assign failed, can only assign by the assignee",true);
             }
-            return new Response("column capacity exceeds the new limitation please choose higher limitation", true);
+            return new Response("No such Task",true);
+        }
+        internal void unAssign(string email)
+        {
+            int i = 0;
+            while (i < columns.Count-1)
+            {
+                foreach (Task task in columns[i].GetTasks().Values)
+                {
+                    if (task.Assignee == email)
+                    {
+                        task.setAssignee("");
+                    }
+                }
+                i++;
+            }
+
+        }
+        /*        public string ToInProgress(int taskID)
+                {
+                    Task task;
+                    if ( columns[0].GetTask(taskID) != null)
+                    {
+                        task = columns[0].GetTask(taskID);
+                        task.ChangeStatus(2);
+                        columns[0].RemoveTask(taskID);
+                        return columns[1].AddTask(task);
+                    }
+                    else
+                    {
+                        return "task not found";
+                    }
+                }
+
+                public string ToIsDone(int taskID)
+                {
+                    Task task;
+                    if (columns[1].GetTask(taskID) != null)
+                    {
+                        task = columns[1].GetTask(taskID);
+                        task.ChangeStatus(3);
+                        columns[1].RemoveTask(taskID);
+                        return columns[2].AddTask(task);
+                    }
+                    else
+                    {
+                        return "task not found";
+                    }
+                }*/
+
+        public void LimitColumn(int colomunIDX, int limit) //can we assume the user will not limit the column 
+        {
+            if (!columns[colomunIDX].SetColumnLimit(limit))
+            {
+                logger.Warn("Cannot limit column");
+                throw new Exception("column capacity exceeds the new limitation please choose higher limitation");
+            }
+
         }
 
         public string RenameColumn(int columnIDX, string name)
@@ -90,112 +159,98 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return "success";   
         }
 
-        public Response UpdateTaskDue(int taskID, DateTime newDue)
+        public void UpdateTaskDue(int taskID, int columnOrdinal,string email, DateTime newDue)
         {
-            for(int i=0; i<2; i++)
-            {
-                if (columns[i].GetTask(taskID) != null)
+            Task task= null;
+            if(! (columnOrdinal > columns.Count))
+            { 
+                task = columns[columnOrdinal].GetTask(taskID);
+                if (columnOrdinal == 2)
                 {
-                    if (columns[i].GetTask(taskID).EditTaskDueDate(newDue))
-                    {
-                        logger.Info("Task due date has been set succesfully");
-                        return new Response("{}");
-                    }
-                    
+                    logger.Warn("Task is already done.");
+                    throw new Exception("Task is already done G");
                 }
-            }
-            if (columns[2].GetTask(taskID)!= null)
-            {
-                logger.Warn("Task is already done.");
-                return new Response("Task is already Done", true);
+                if (task != null)
+                {
+                    task.EditTaskDueDate(email, newDue);
+                    return;
+                }
+
             }
             logger.Warn("Task doesn't exist, Task ID: "+taskID);
-            return new Response("Task not found", true);
+            throw new Exception("Task doesn't exist");
         }
 
-        internal Response GetColumnForReal(int columnOrdinal)
-        {
-            List<Task> tasks = new List<Task>();
-            foreach(Task task in columns[columnOrdinal].GetTasks().Values)
-            {
-                tasks.Add(task);
-            }
-            return new Response(tasks);
-        }
 
         internal Response GetColumn(int columnOrdinal)
         {
             if(columnOrdinal > columns.Count())
             {
-                return new Response("Column Index doesnt exist", true);
+                throw new Exception("Column ordinal doesn't exist");
             }
-            if (columns[columnOrdinal].GetTasks().Count == 0)
+            else
             {
-                return new Response("{}");
-            }
-            return new Response("{}");
-
-    /*            List<Task> tasks = new List<Task>();
-                foreach(Task task in columns[columnOrdinal].GetTasks().Values)
+                /*List<Task> tasks = new List<Task>();
+                foreach (Task task in )
                 {
                     tasks.Add(task);
-                }
-            }*/
+                }*/
+                return new Response(columns[columnOrdinal].GetTasks().Values);
+            }
 
         }
 
-        public Response UpdateTaskDesc(int taskID, string newDesc)
+        public void UpdateTaskDesc(int taskID,int columnOrdinal, string email,string newDesc)
         {
-            for (int i = 0; i < 2; i++)
-            {
-                if (columns[i].GetTask(taskID) != null)
+            Task task = null;
+            if (!(columnOrdinal > columns.Count())) { 
+                task = columns[columnOrdinal].GetTask(taskID);
+                if (columnOrdinal == 2)
                 {
-                    if (columns[i].GetTask(taskID).EditTaskDesc(newDesc))
-                    {
-                        logger.Info("Updated Task description.");
-                        return new Response("success");
-                    }
+                    logger.Warn("Cannot edit finished tasks.");
+                    throw new Exception("Task is already Done G");
                 }
-            }
-            if (columns[2].GetTask(taskID)!= null)
-            {
-            logger.Warn("Cannot edit finished tasks.");
-                return new Response("Task is already Done", true);
-            }
-            return new Response("Task not found", true);
-        }
-            
-            
-        
-
-        public Response UpdateTaskTitle(int taskID, string newTitle)
-        {
-            for (int i = 0; i<2; i++)
-            {
-                if (columns[i].GetTask(taskID) != null)
+                if (task != null)
                 {
-                    if (columns[i].GetTask(taskID).EditTaskTitle(newTitle))
-                    {
-                        logger.Info("Task title edited successfully");
-                        return new Response("{}");
-                    }
-                    else
-                    {
-                        logger.Warn("Cannot edit finished tasks.");
-                        return new Response("task already done", true);
-                    }
+                    task.EditTaskDesc(email, newDesc);
+                    logger.Info("Updated Task description.");
+                    return;
                 }
-                if (columns[2].GetTask(taskID) != null)
-                {
-                    logger.Warn("Task is already Done");
-                    return new Response("task is alreay done", true);
-                }
+                
             }
             logger.Warn("Task not found");
-            return new Response("Task not found", true);
+            throw new Exception("Task not found");
         }
 
-        public Response AdvanceTask(int taskid)
+
+
+
+        public void UpdateTaskTitle(int taskID, string email, string newTitle, int columnOrdinal)
+        {
+            Task task = null;
+            if (!(columnOrdinal > columns.Count()))
+            {
+                task = columns[columnOrdinal].GetTask(taskID);
+                if (columnOrdinal == 2)
+                {
+                    logger.Warn("Task is already Done");
+                    throw new Exception("Task is already Done G");
+                }
+                if (task != null)
+                {
+                    task.EditTaskTitle(email, newTitle);
+                    logger.Info("Task title edited successfully");
+                    return;
+                }
+            }
+            else
+            { 
+                logger.Warn("Task not found");
+                throw new Exception("Task not found");
+            }
+        }
+
+        public void AdvanceTask(int taskid,string email)
         {
             for(int i = 0; i< 2; i++ )
             {
@@ -204,30 +259,31 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     Task task = columns[i].GetTasks()[taskid];
                     if (columns[i+1].canAdd()) //What happens if you limit the column and try to advance task?
                     {
+                        if (task.Assignee != email)
+                            throw new Exception("Task isn't assigned to this user.");
                         columns[i].RemoveTask(taskid); // you dont want to delete before you check wether you can add the task or not.
                         logger.Info("Advanced task successfully.");
-                        return columns[i + 1].AddTask(task);
+                        TaskMapper.Instance.Update(taskid, this.boardowner, "ordinal", i + 1);
+                        columns[i + 1].AddTask(task,this.boardID,this.boardowner);
+                        return;
                     }
                     logger.Warn("Cannot advance Task, column has reached it's max capacity");
-                    return new Response("Cannot advance task", true);
+                    throw new Exception("Cannot advance Task, Column has reached it's max capacity.");
                     }
                 }
             if (columns[2].GetTasks().ContainsKey(taskid))
             {
                 logger.Warn("Task is already Done");
-                return new Response("Task is already done G", true);
+                throw new Exception("Task is already Done G");
             }
-            else
-            {
-                logger.Warn("Task doesn't exist.");
-                return new Response("Task isnt found", true);
-            }
-            }
+            logger.Warn("Task doesn't exist.");
+            throw new Exception("Task doesn't exist.");
+        }
         
 
         public string GetInProgress()
         {
-            return columns[1].ToString(); //todo coloumn.tostring
+            return columns[1].ToString(); 
         }
 
         public List<Task> GetColumnTaskList(int coulumnID)
@@ -257,28 +313,48 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         internal Response GetColumnLimit(int columnOrdinal)
         {
-            try
-            {
-                int limit = columns[columnOrdinal].getlimit();
-                return new Response(limit.ToString());
-            }
-            catch (Exception ex)
-            {
-                return new Response("Column Ordinal doesnt exist", true);
-            }
+            if(columnOrdinal>3 || columnOrdinal<0)
+                throw new Exception("Invalid column ordinal");
+            return new Response(columns[columnOrdinal].getlimit().ToString());            
         }
 
         internal Response GetColumnName(int columnOrdinal)
         {
             try
             {
-                string name = columns[columnOrdinal].getName();
-                return new Response(name);
+                return new Response(columns[columnOrdinal].getName());
             }
             catch (Exception ex)
             {
-                return new Response("Column Ordinal doesnt exist", true);
+                throw new Exception("Column ordinal doesn't exist.");
             }
+        }
+
+        internal int getID()
+        {
+            return this.boardID;
+        }
+
+        internal void RestoreColumns(List<ColumnDTO> cols)
+        {
+            foreach(ColumnDTO c in cols)
+            {
+                Column column = new Column(c.ColumnName, c.limit);
+                columns[c.ordinal] = column;
+            }
+        }
+        internal void RestoreTasks(List<TaskDTO> tasks)
+        {
+            foreach(TaskDTO t in tasks)
+            {
+                Task task = new Task(t.Title, t.Description, t.DueDate, t.Id);
+                task.CreationTime = t.CreationTime;
+                task.setAssignee(t.Assignee);
+                columns[t.ordinal].AddTask(task,this.boardID,this.boardowner); 
+            }
+           
+                
+            
         }
     }
 }

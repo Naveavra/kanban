@@ -29,17 +29,22 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public UserService()
         {
             userControl = new UserControl();
-        }
+/*            userControl.LoadData();
+*/        }
 
         public string Register(string email, string password)
         {
             string newEmail = email.ToLower();
-            Response response = userControl.Register(newEmail, password);  
-            if (response.ErrorOccured())
+            try
             {
-                return response.Serialize();
+                userControl.Register(newEmail, password);
+                return "{}";
+
+            }catch (Exception ex)
+            {
+                return new Response(ex.Message,true).Serialize();
             }
-            return "{}";
+            
         }
         /// <summary>
         /// this mehod will allow a rgistered user to log in to his account
@@ -50,12 +55,15 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public string Login(string email, string password)
         {
             email= email.ToLower();
-            Response response = userControl.Login(email, password);
-            if (response.ErrorOccured())
+            try
             {
-                return response.Serialize(); 
+                userControl.Login(email, password);
+                return new Response(email).Serialize();
+            }catch (Exception ex)
+            {
+                return new Response(ex.Message,true).Serialize();
             }
-            return response.Serialize();
+            
         }
         /// <summary>
         /// this method will log out a log in user
@@ -65,22 +73,36 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public string Logout(string email)
         {
             email = email.ToLower();
-            Response response = userControl.Logout(email);
-            if (response.ErrorOccured())
+            try
             {
-                return response.Serialize();
+                userControl.Logout(email);
+                return "{}";
             }
-            return "{}";
+            catch (Exception ex)
+            {
+                return new Response(ex.Message,true).Serialize();
+            }
+            
 
         }
-
+        
         public bool Logged(string email)
         {
-            if (userControl.Logged(email))
-            {
-                return true;
-            }
-            return false;
+            return userControl.Logged(email);
+        }
+        public Response LoadData()
+        {
+            return userControl.LoadData();
+        }
+
+        public string DeleteData()
+        {
+            return userControl.DeleteData().Serialize();
+        }
+
+        internal bool Registered(string email)
+        {
+            return userControl.Registered(email);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 {
     internal sealed class Validator
     {
-        List<string> Users_Emailes = new List<string>();
+        private Dictionary<string,User> Users_Emailes = new Dictionary<string, User>();
+        //Magic Numbers
+        private int maxTitleLen = 50;
+        private int minTitleLen = 0;
+        private int maxDescLen = 300;
+        private int maxPwLen = 20;
+        private int minPwLen = 6;
         public Validator() { }
 
         private static Validator instance = null;
@@ -17,13 +24,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public static Validator Instance { get { return instance ?? (instance = new Validator()); } }
 
         //title cant be over 50
-        public bool ValidateTaskTitle(string title)
+        public void ValidateTaskTitle(string title)
         {
-           if(title.Length > 50 || title.Length == 0 || String.IsNullOrWhiteSpace(title))
+           if(title.Length > maxTitleLen || title.Length == minTitleLen|| String.IsNullOrWhiteSpace(title))
             {
-                return false;
+                throw new Exception("Title input invalid.");
             }
-            return true;
         }
 
         internal void reset()
@@ -32,15 +38,18 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
 
         //description can be empty and cant be over 300
-        public bool ValidateTaskDesc(string desc)
+        public void ValidateTaskDesc(string desc)
         {
-            if(desc.Length > 300)
+            if(desc.Length > maxDescLen)
             {
-                return false;
+                throw new Exception("Description is too long.");
             }
-            return true;
+            
         }
-
+        public void insertUsersFromDB(Dictionary<string,User> lst)
+        {
+            Users_Emailes = lst;
+        }
         //checks wether a board name is already taken
 /*        private string isBoardNameAvailable(string newBoardName, List<string> boardNames)
         {
@@ -65,7 +74,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public bool ValidateEmailUsingRegex(string email)
         {
             Regex validateEmailRegex = new Regex(@"^[\w!#$%&'+\-/=?\^_`{|}~]+(\.[\w!#$%&'+\-/=?\^_`{|}~]+)*@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
-            return validateEmailRegex.IsMatch(email) && UniqueEmail(email);
+            if (!validateEmailRegex.IsMatch(email))
+                throw new Exception("Email isn't valid");
+            return validateEmailRegex.IsMatch(email);
         }
        
         public string validateEmail(string email)
@@ -89,27 +100,30 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         public bool UniqueEmail(string email)
         {
-            return !Users_Emailes.Contains(email);
+            UserMapper mapper = new UserMapper();
+            if (Users_Emailes.ContainsKey(email) || mapper.Contains(email))
+                throw new Exception("Email isn't unique.");
+            return !Users_Emailes.ContainsKey(email);
         }
-/*
-        public string EmailIsUnique(string email, List<string> AllEmails)
-        {
-           if (AllEmails.Contains(email))
-            {
-                return "email is not unique";
-            }
-           else
-            {
-                return "success";
-            }
-        }*/
-
+        /*
+                public string EmailIsUnique(string email, List<string> AllEmails)
+                {
+                   if (AllEmails.Contains(email))
+                    {
+                        return "email is not unique";
+                    }
+                   else
+                    {
+                        return "success";
+                    }
+                }*/
+        
         //nust include atleast 1 upper, lower, number, length between 6-20
         private string validatePassword(string password)
         {
-            if(password.Length > 20 || password.Length < 6)
+            if(password.Length > maxPwLen || password.Length < minPwLen)
             {
-                return "Enter a valid password";
+                throw new Exception("Password's length is incorrect, it must be between 6 and 20 letters.");
             }
             bool upperLetter = false;
             bool lowerLetter = false;
@@ -126,7 +140,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             if(!upperLetter || !lowerLetter || !number)
             {
-                return "Password missing a lower letter/upper letter\number";
+                throw new Exception("Password missing a lower letter/upper letter/number");
             }
             else
             {
@@ -134,17 +148,28 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
         } 
 
-        public bool ValidteRegistraion(string email, string password)
+        public void ValidateRegistraion(string email, string password)
         {
-            bool valid = false;
             //validateEmail(email).Equals("Great Success")
-            if (validatePassword(password).Equals("Great Success") && ValidateEmailUsingRegex(email))
+            if (validatePassword(password).Equals("Great Success") && ValidateEmailUsingRegex(email) && UniqueEmail(email))
             {
-                Users_Emailes.Add(email);
-                valid = true;
+                User user =  new User(email, password);
+                Users_Emailes.Add(email,user);
+                return;
             }
-            return valid;
+            throw new Exception("invalid registraion");
+            
         }
-        
+        /*internal bool Logged(string email)
+        {
+            if (Users_Emailes.ContainsKey(email))
+            {
+                return Users_Emailes[email].Logged();
+            }
+            else
+            {
+                return false;
+            }
+        }*/
     }
 }

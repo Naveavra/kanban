@@ -8,22 +8,23 @@ using Newtonsoft.Json;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
 {
-    internal class Kaki_Pipi
+    public class Facade
     {
-        private static Kaki_Pipi instance = null;
+        private static Facade instance = null;
 
-        public static Kaki_Pipi Instance { get { return instance ?? (instance = new Kaki_Pipi()); } }
+        public static Facade Instance { get { return instance ?? (instance = new Facade()); } }
 
         UserService userService;
         BoardService boardService;
 
-        public Kaki_Pipi()
+        public Facade()
         {
             userService = new UserService();
             boardService = new BoardService();
         }
         public string Register(string email, string password)
         {
+            email = email.ToLower();
             if (email == null)
             {
                 return new Response("Email can't be null").Serialize();
@@ -34,6 +35,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public string Login(string email, string password)
         {
+            email = email.ToLower();
             if (email == null)
             {
                 return new Response("Email can't be null").Serialize();
@@ -44,6 +46,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public string Logout(string email)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -55,6 +58,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
        
         public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -66,6 +70,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
        
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -78,6 +83,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -86,9 +92,14 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return boardService.GetColumnName(email, boardName, columnOrdinal);
         }
 
+        public void getReady()
+        {
+            boardService.getReady();
+        }
 
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -99,41 +110,45 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
 
         public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
-        {
+        { 
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
                 return response.Serialize();
             }
-            return boardService.UpdateTaskDueDate(email, boardName,taskId, dueDate);
+            return boardService.UpdateTaskDueDate(email, boardName,taskId,columnOrdinal, dueDate);
         }
 
 
         public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskId, string title)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
                 return response.Serialize();
             }
-            return boardService.UpdateTaskTitle(email, boardName, taskId, title);
+            return boardService.UpdateTaskTitle(email, boardName,columnOrdinal, taskId, title);
         }
 
 
    
         public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskId, string description)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
                 return response.Serialize();
             }
-            return boardService.UpdateTaskDesc(email, boardName, taskId, description);
+            return boardService.UpdateTaskDesc(email, boardName,columnOrdinal, taskId, description);
         }
 
 
         public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskId)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -145,6 +160,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -157,6 +173,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public string AddBoard(string email, string name)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -168,6 +185,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public string RemoveBoard(string email, string name)
         {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -183,7 +201,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">Email of the user. Must be logged in</param>
         /// <returns>Response with  a list of the in progress tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string InProgressTasks(string email)
-        {            
+        {
+            email = email.ToLower();
             Response response = Validate(email);
             if (response.ErrorOccured())
             {
@@ -215,6 +234,83 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return makeError("User doesn't exist or not logged in");
             }
            return makeOk(true);
+        }
+        internal bool Registered(string email)
+        {
+            return userService.Registered(email);
+        }
+        public string LoadData()
+        {
+            try
+            {
+                boardService.LoadData();
+                userService.LoadData();
+                return new Response("{}").Serialize();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Failed loadingData in facade");
+                return new Response("Some Error occured while loading the data", true).Serialize();
+            }
+        }
+
+        public string JoinBoard(string email, int boardID)
+        {
+            email = email.ToLower();
+            Response r = Validate(email);
+            if (r.ErrorOccured())
+            {
+                return r.Serialize();
+            }
+            return boardService.JoinBoard(email, boardID);
+        }
+
+        public string LeaveBoard(string email, int boardID)
+        {
+            email = email.ToLower();
+            Response r = Validate(email);
+            if (r.ErrorOccured())
+            {
+                return r.Serialize();
+            }
+            return boardService.LeaveBoard(email, boardID);
+        }
+        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            email = email.ToLower();
+            emailAssignee = emailAssignee.ToLower();
+            Response r = Validate(email);
+            if (r.ErrorOccured()||!Registered(email) ||! Registered(emailAssignee))
+            {
+                return r.Serialize();
+            }
+            return boardService.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
+        }
+
+        public string DeleteData()
+        {
+            boardService.DeleteData();
+            userService.DeleteData();
+            return new Response("").Serialize();
+        }
+        public string GetUserBoards(string email)
+        {
+            email = email.ToLower();
+            Response r = Validate(email);
+            if (r.ErrorOccured())
+                return r.Serialize();
+            return boardService.GetBoardIDs(email);
+
+        }
+        public string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        {
+            currentOwnerEmail = currentOwnerEmail.ToLower();
+            newOwnerEmail = newOwnerEmail.ToLower();
+            Response r = Validate(currentOwnerEmail);
+            if (r.ErrorOccured())
+                return r.Serialize();
+            return boardService.TransferOwnership(currentOwnerEmail,newOwnerEmail,boardName);
         }
     }
     
