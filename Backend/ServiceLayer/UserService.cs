@@ -38,7 +38,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 userControl.Register(newEmail, password);
-                return "{}";
+                return new Response().Serialize();
 
             }catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 userControl.Logout(email);
-                return "{}";
+                return new Response().Serialize();
             }
             catch (Exception ex)
             {

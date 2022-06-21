@@ -42,7 +42,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AddTask(email, boradname, title, desc, dueDate);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch (Exception ex)
             {
@@ -57,9 +57,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AddBoard(email, name);
-/*                return new Response("").Serialize();
-*/                return "{}";
-            }catch (Exception ex)
+                /*                return new Response("").Serialize();
+                */
+                return new Response().Serialize();
+            }
+            catch (Exception ex)
             {
                 return new Response(ex.Message,true).Serialize();
             }
@@ -73,7 +75,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.UpdateTaskDue(email, boardName, taskID,columnOrdinal, newDate);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch(Exception ex)
             {
@@ -103,7 +105,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.UpdateTaskTitle(email, boardName,columnOrdinal, taskID, newTitle);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch (Exception e)
             {
@@ -127,7 +129,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.UpdateTaskDesc(email, boardName,columnOrdinal, taskID, NewDescription);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch(Exception ex)
             {
@@ -143,7 +145,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AdvanceTask(email, boardName, taskId);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch(Exception e)
             {
@@ -163,7 +165,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.RemoveBoard(email, boardName);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch(Exception e)
             {
@@ -238,7 +240,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.LimitColumn(email, boardName, columnOrdinal, limit);
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch(Exception e)
             {
@@ -303,7 +305,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.LoadData();
-                return new Response("{}").Serialize();
+                return new Response().Serialize();
             }
             catch(Exception e)
             {

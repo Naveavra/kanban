@@ -21,6 +21,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             ReturnValue = val;
         }
+        public Response() { }
         public Response(string msg, bool err)
         {
             if (err)

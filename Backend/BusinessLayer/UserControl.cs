@@ -45,7 +45,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 list.Add(key);
             }*/
             validator.insertUsersFromDB(users);
-            return new Response("{}");
+            return new Response();
         }
         public void Login(string email, string pw)
         {
@@ -100,7 +100,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             users.Clear();
             userMapper.deleteData();
 //            userMapper.setLoaded(false);
-            return new Response("{}");
+            return new Response();
         }
 
         internal bool Logged(string email)

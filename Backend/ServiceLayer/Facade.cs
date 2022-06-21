@@ -292,7 +292,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             boardService.DeleteData();
             userService.DeleteData();
-            return new Response("").Serialize();
+            return new Response().Serialize();
         }
         public string GetUserBoards(string email)
         {
