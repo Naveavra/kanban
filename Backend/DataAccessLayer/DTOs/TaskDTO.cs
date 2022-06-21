@@ -38,7 +38,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         public string Assignee { get => _Assignee; set { _Assignee = value; TaskMapper.Instance.Update(Id, owner, "assigned", Assignee); } }
 
 
+
         public TaskDTO(int id, DateTime creationTime, string title, string description, int ordinal, int boardID, DateTime dueDate, string assignee,string owner)
+
         {
             _Id = id;
             _CreationTime = creationTime;
@@ -50,7 +52,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _Assignee = assignee;
             _owner = owner;
         }
+
         public TaskDTO(Task t,int boardID,int ordinal,string owner)
+
         {
             _Id = t.Id;
             _CreationTime = t.CreationTime;
