@@ -56,9 +56,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 users[email].Login(pw);
             }
             else 
-            { 
+            {
+                logger.Warn("Error. email: " + email + " doesn't exist");
                 throw new Exception($"Email: {email} Doesn't exist.");
-                logger.Warn("Error. email: " + email + " doesn't exist"); 
             }
         }
 

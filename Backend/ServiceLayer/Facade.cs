@@ -281,10 +281,16 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             email = email.ToLower();
             emailAssignee = emailAssignee.ToLower();
             Response r = Validate(email);
+            if (!(userService.Logged(email)) || !userService.Registered(emailAssignee))
+            {
+                Response r2 = new Response("one of the emails isnt correct", true);
+                return r2.Serialize();
+            }
             if (r.ErrorOccured()||!Registered(email) ||! Registered(emailAssignee))
             {
                 return r.Serialize();
             }
+            
             return boardService.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
         }
 

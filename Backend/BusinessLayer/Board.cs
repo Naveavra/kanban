@@ -47,7 +47,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             List<Task> assigned = new List<Task>();
             foreach(Task task in columns[1].GetTasks().Values)
             {
-                if(task.Assignee == email)  
+                if(task.getAssignee() == email)  
                     assigned.Add(task);
             }
             return assigned;
@@ -86,10 +86,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             Task task = columns[columnOrdinal].GetTask(taskId);
             if(task != null)
             {
-                if (task.Assignee == email || task.Assignee == "")
+                if (task.getAssignee() == email || task.getAssignee() == "")
                 {
+                    if (email == emailAssignee)
+                    {
+                        return new Response("this email is already assigned for the task.", true);
+                    }
                     task.setAssignee(emailAssignee);
-                    return new Response("{}");
+                    return new Response();
                 }
                 return new Response("Assign failed, can only assign by the assignee",true);
             }
@@ -102,7 +106,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 foreach (Task task in columns[i].GetTasks().Values)
                 {
-                    if (task.Assignee == email)
+                    if (task.getAssignee() == email)
                     {
                         task.setAssignee("");
                     }
@@ -259,7 +263,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     Task task = columns[i].GetTasks()[taskid];
                     if (columns[i+1].canAdd()) //What happens if you limit the column and try to advance task?
                     {
-                        if (task.Assignee != email)
+                        if (task.getAssignee() != email)
                             throw new Exception("Task isn't assigned to this user.");
                         columns[i].RemoveTask(taskid); // you dont want to delete before you check wether you can add the task or not.
                         logger.Info("Advanced task successfully.");
@@ -315,7 +319,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             if(columnOrdinal>3 || columnOrdinal<0)
                 throw new Exception("Invalid column ordinal");
-            return new Response(columns[columnOrdinal].getlimit().ToString());            
+            return new Response(columns[columnOrdinal].getlimit());            
         }
 
         internal Response GetColumnName(int columnOrdinal)

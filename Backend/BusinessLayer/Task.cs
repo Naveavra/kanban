@@ -22,8 +22,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
-        public string Assignee { get; private set; }
-        public Status Status { get; set; }
+        private string Assignee { get;  set; }
+        private Status Status { get; set; }
         [JsonIgnore] //i think that if we delete the get ans set the json will skip it 
         public TaskDTO? DTO { get;private set; }
         public Task(string title, string description, DateTime dueDate,int taskID)
@@ -44,6 +44,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
         public int gettaskID(){return this.Id; }
         public string gettitle() { return this.Title; }
+
+        public string getAssignee() { return this.Assignee; }
         public string getDescription() { return this.Description; } 
         //public string getCurrentBoard() { return this.currentBoard; }   
         public DateTime getdueDate() { return this.DueDate; }

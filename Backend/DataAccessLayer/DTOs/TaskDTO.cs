@@ -63,7 +63,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _ordinal = ordinal;
             _boardID = boardID;
             _DueDate = t.DueDate;
-            _Assignee = t.Assignee;
+            _Assignee = t.getAssignee();
             _owner = owner;
         }
         public void save()
