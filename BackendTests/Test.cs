@@ -26,18 +26,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public void RunTests()
         {
             GetReady();
-            Console.WriteLine("-------- Login/Logout/Registration Tests ---------\n");
+         /*   Console.WriteLine("-------- Login/Logout/Registration Tests ---------\n");
             UserOpTests();
             Console.WriteLine("-------- Board Tests ---------\n");
             BoardTests();
             Console.WriteLine("-------- Task Tests ---------\n");
             taskTests();
             Console.WriteLine("-------- Column Tests ---------\n");
-            ColumnTests();
+            ColumnTests();*/
             /*Console.WriteLine("-------- Delete/Load Data Tests ---------\n");
             DeleteLoadTest();
+            */
             Console.WriteLine("-------- Assignment Tests ---------\n");
-            AssignTest();*/
+            AssignTest();
         }
         private void DeleteLoadTest()
         {
@@ -190,7 +191,30 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine(counter.ToString() + "." + facade.TransferOwnership("miki96@gmail.com", "nadia97@gmail.com", "nitutz"));
             Console.WriteLine("-----------------------\n");
             counter++;
-            facade.DeleteData();
+            Console.WriteLine(counter.ToString() + "valid add board");
+            Console.WriteLine(counter.ToString() + "." + facade.AddBoard("naveav95@gmail.com", "board2"));
+            Console.WriteLine("-----------------------\n");
+            counter++;
+            facade.AddTask("naveav95@gmail.com", "board2", "task2", "im tired", new DateTime());
+            facade.JoinBoard("miki96@gmail.com", 2);
+            facade.JoinBoard("nadia97@gmail.com", 2);
+            facade.AddTask("nadia97@gmail.com", "board2", "task3", "im also tired", new DateTime());
+            Console.WriteLine(counter.ToString() + "valid assign task");
+            Console.WriteLine(counter.ToString() + "." + facade.AssignTask("nadia97@gmail.com", "board2", 0, 0, "miki96@gmail.com"));
+            Console.WriteLine("-----------------------\n");
+            Console.WriteLine(counter.ToString() + "Invalid assign task");
+            Console.WriteLine(counter.ToString() + "." + facade.AssignTask("naveav95@gmail.com", "board2", 0, 0, "miki96@gmail.com"));
+            Console.WriteLine("-----------------------\n");
+            Console.WriteLine(facade.AddTask("nadia97@gmail.com", "board2", "task1", "dd", new DateTime()));
+            Console.WriteLine(facade.AdvanceTask("nadia97@gmail.com", "board2", 0, 1));
+            Console.WriteLine(facade.AdvanceTask("naveav95@gmail.com", "board2", 0, 1));
+            Console.WriteLine(facade.AssignTask("naveav95@gmail.com", "board2", 1, 1, "nadia97@gmail.com"));
+            Console.WriteLine(facade.AdvanceTask("miki96@gmail.com", "board2", 0, 1));
+            Console.WriteLine(facade.AssignTask("miki96@gmai.com", "board2", 1, 0, "nadia97@gmail.com"));
+            Console.WriteLine(facade.InProgressTasks("nadia97@gmail.com"));
+
+
+            facade.DeleteData(); 
             //loading data to the tables again
             facade.Register("dan96@gmail.com", "Aa123456");
             facade.Register("miki96@gmail.com", "Aa123456");
