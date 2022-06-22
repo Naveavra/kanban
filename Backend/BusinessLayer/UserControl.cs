@@ -74,6 +74,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             //users.Add(email, user);
             userMapper.addData(new UserDTO(email, pw, false));
             logger.Info("User: " + email + ", Registered Successfully");
+            Login(email, pw);
             
             
         }

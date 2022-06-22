@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -74,8 +75,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         public bool ValidateEmailUsingRegex(string email)
         {
-            Regex validateEmailRegex = new Regex(@"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$");
-            if (!validateEmailRegex.IsMatch(email))
+            string s = email.Substring(0,email.IndexOf("@"));
+            string s1 = email.Substring(email.IndexOf("@") + 1);
+            Regex validateEmailRegex = new Regex(@"^[\w!#$%&'+\-/=?\^_`{|}~]+(\.[\w!#$%&'+\-/=?\^_`{|}~]+)*@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
+            Regex validateEmailRegex2 = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            Regex validateEmailRegex3 = new Regex(@"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$");
+            if (!(validateEmailRegex.IsMatch(email) || validateEmailRegex2.IsMatch(email) || validateEmailRegex3.IsMatch(email)) || s.Count() > 64 || s1.Contains("_") || !NotContainsHebrew(email))
                 throw new Exception("Email isn't valid");
             return validateEmailRegex.IsMatch(email);
         }
@@ -118,11 +123,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                         return "success";
                     }
                 }*/
-        
+       
+
         //nust include atleast 1 upper, lower, number, length between 6-20
         private string validatePassword(string password)
         {
-            if(string.IsNullOrWhiteSpace(password)||string.IsNullOrEmpty(password) || !(password.Any(char.IsUpper))|| !(password.Any(char.IsLower))|| !(password.Any(char.IsDigit)))
+            if(string.IsNullOrWhiteSpace(password)||string.IsNullOrEmpty(password) || !(password.Any(char.IsUpper))|| !(password.Any(char.IsLower))|| !(password.Any(char.IsDigit)) || password.Contains(" ") || !NotContainsHebrew(password))
             {
                 throw new Exception("Invalid Password input");
             }
@@ -136,12 +142,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             for (int i = 0; i < password.Length; i++)
             {
                 char c = password[i];
-                if (c >= 'a' && c <= 'z')
+                if (char.IsLower(c))
                     lowerLetter = true;
-                else if (c >= 'A' && c <= 'Z')
+                else if (char.IsUpper(c))
                     upperLetter = true;
-                else if(c >= '0' && c <= '9')
-                    number = true;
+                else if (char.IsDigit(c)) { number = true; }
             }
             if(!upperLetter || !lowerLetter || !number)
             {
@@ -151,13 +156,37 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 return "Great Success";
             }
-        } 
+        }
+        public bool NotContainsHebrew(string email)
+        {
+            char[] chars = "אבגדהוזחטיכלמנסעפצקרשת".ToCharArray();
+            foreach (char c in email.ToCharArray())
+            {
+                if (chars.Contains(c))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool test1(string emailaddress)
+        {
+            try
+            {
+                MailAddress m = new MailAddress(emailaddress);
 
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
         public void ValidateRegistraion(string email, string password)
         {
-            EmailAddressAttribute check = new EmailAddressAttribute();
             //validateEmail(email).Equals("Great Success")
-            if (validatePassword(password).Equals("Great Success") && ValidateEmailUsingRegex(email) && UniqueEmail(email) &&!check.IsValid(email))
+            
+            if (validatePassword(password).Equals("Great Success") && ValidateEmailUsingRegex(email) && UniqueEmail(email) )
             {
                 User user =  new User(email, password);
                 Users_Emailes.Add(email,user);

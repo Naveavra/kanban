@@ -27,7 +27,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             GetReady();
             Console.WriteLine("-------- Login/Logout/Registration Tests ---------\n");
             UserOpTests();
-            Console.WriteLine("-------- Board Tests ---------\n");
+            /*Console.WriteLine("-------- Board Tests ---------\n");
             BoardTests();
             Console.WriteLine("-------- Task Tests ---------\n");
             taskTests();
@@ -36,7 +36,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine("-------- Delete/Load Data Tests ---------\n");
             DeleteLoadTest();
             Console.WriteLine("-------- Assignment Tests ---------\n");
-            AssignTest();
+            AssignTest();*/
         }
         private void DeleteLoadTest()
         {
@@ -358,6 +358,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         }
         private void UserOpTests()
         {
+            Console.WriteLine("NAVE USE THE TEST BELOW TO FIND OUT WHY REGISTER FAILS");
+            Console.WriteLine(counter.ToString() + "." + facade.Register("navav95@gmail.com", "AAAAAAAa9"));//0 Valid registraion
+
+
             Console.WriteLine("-----------------------\n");
             Console.WriteLine(counter.ToString() + " Valid registration Should Succeed");
             Console.WriteLine(counter.ToString() + "." + facade.Register("naveav95@gmail.com", "Aa123456"));//0 Valid registraion
