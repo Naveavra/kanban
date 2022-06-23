@@ -82,7 +82,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
  //           LoadData();
             validator.ValidateRegistration(email, pw);
             User user = new User(email, pw);
-            users.Add(email, user);
+            if(!users.ContainsKey(email))
+                users.Add(email, user);
             userMapper.addData(new UserDTO(email, pw, false));
             Login(email, pw);
         }
@@ -114,6 +115,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return userMapper.deleteData(usrs);*/
             users.Clear();
             userMapper.deleteData();
+            validator.reset();
 //            userMapper.setLoaded(false);
             return new Response();
         }

@@ -48,10 +48,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
                 DROP TABLE IF EXISTS Tasks;
                 ";*/
             cmd.CommandText = @"DELETE FROM Users;
-                                DELETE FROM Boards;
-                                DELETE FROM BoardUsers;
-                                DELETE FROM Columns;
-                                DELETE FROM Tasks;";
+                                 DELETE FROM Boards;
+                                 DELETE FROM BoardUsers;
+                                 DELETE FROM Columns;
+                                 DELETE FROM Tasks;";
             cmd.Prepare();
             cmd.ExecuteNonQuery();
             CreateTables(conn);

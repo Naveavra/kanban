@@ -154,11 +154,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         /// <returns>The string "{}", unless an error occurs (see <see cref="GradingService"/>)</returns>
         
-        public string AdvanceTask(string email, string boardName, int taskId)
+        public string AdvanceTask(string email, string boardName,int columnOrdinal, int taskId)
         {
             try
             {
-                boardControl.AdvanceTask(email, boardName, taskId);
+                boardControl.AdvanceTask(email, boardName,columnOrdinal, taskId);
                 logger.Info("Advanced Task Successfully");
                 return new Response().Serialize();
             }

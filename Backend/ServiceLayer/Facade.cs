@@ -158,7 +158,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return response.Serialize();
             }
             email = email.ToLower();
-            return boardService.AdvanceTask(email, boardName, taskId);
+            return boardService.AdvanceTask(email, boardName,columnOrdinal, taskId);
         }
 
 

@@ -251,25 +251,25 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
         }
 
-        public void AdvanceTask(int taskid,string email)
+        public void AdvanceTask(int taskid,int columnOrdinal,string email)
         {
-            for(int i = 0; i< 2; i++ )
+            if (columnOrdinal >= columns.Count || columnOrdinal<0)
+                throw new Exception("Column Ordinal Isn't correct");
+            if (columnOrdinal !=2 && columns[columnOrdinal].GetTasks().ContainsKey(taskid))
             {
-                if (columns[i].GetTasks().ContainsKey(taskid))
+                Task task = columns[columnOrdinal].GetTasks()[taskid];
+                if (columns[columnOrdinal+1].canAdd()) //What happens if you limit the column and try to advance task?
                 {
-                    Task task = columns[i].GetTasks()[taskid];
-                    if (columns[i+1].canAdd()) //What happens if you limit the column and try to advance task?
-                    {
-                        if (task.getAssignee() != email)
-                            throw new Exception("Task isn't assigned to this user.");
-                        columns[i].RemoveTask(taskid); // you dont want to delete before you check wether you can add the task or not.
-                        TaskMapper.Instance.Update(taskid, this.boardowner, "ordinal", i + 1);
-                        columns[i + 1].AddTask(task,this.boardID,this.boardowner);
-                        return;
-                    }
-                    throw new Exception("Cannot advance Task, Column has reached it's max capacity.");
-                    }
+                    if (task.getAssignee() != email)
+                        throw new Exception("Task isn't assigned to this user.");
+                    columns[columnOrdinal].RemoveTask(taskid); // you dont want to delete before you check wether you can add the task or not.
+                    TaskMapper.Instance.Update(taskid, this.boardowner, "ordinal", columnOrdinal + 1);
+                    columns[columnOrdinal + 1].AddTask(task,this.boardID,this.boardowner);
+                    return;
                 }
+                throw new Exception("Cannot advance Task, Column has reached it's max capacity.");
+                }
+                
             if (columns[2].GetTasks().ContainsKey(taskid))
             {
                 throw new Exception("Task is already Done G");
