@@ -33,6 +33,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             idMap = new Dictionary<int, List<TaskDTO>>(); //boardID, List<Tasks>
         }
         public Dictionary<int, List<TaskDTO>> getTasks() { return idMap; }
+
+        /// <summary>
+        /// loads a chunck od data to our tasks tabls in the db
+        /// </summary>
+        /// <param name="dto"></param>
         public void addData(TaskDTO dto)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -62,6 +67,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
+
+        /// <summary>
+        /// loads data into task table
+        /// </summary>
         public void loadData()
         {
             idMap.Clear();
@@ -87,6 +96,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             conn.reset();
         }
+
+        /// <summary>
+        /// change some data in a specefic place we choose in the task table
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <param name="email"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="attributeValue"></param>
         public void Update(int taskID,string email, string attributeName, object attributeValue)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -100,6 +117,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
+
+        /// <summary>
+        /// remove some data in a specefic place we choose in the task table
+        /// </summary>
+        /// <param name="tasks"></param>
         public void deleteData(Dictionary<string,List<TaskDTO>> tasks)
         {
             string updateQuery = "UPDATE Tasks SET boardName =: boardname, id =: id, assigned =: assigned, title =: title,desc =:desc,dueDate =: dueDate,created=: created,ordinal = ordinal, Status =: status WHERE boardName =: boardname AND id =: id"; 

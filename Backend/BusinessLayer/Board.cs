@@ -59,7 +59,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
 
         /// <summary>
-        /// 
+        /// this function adds more tasks for the user
         /// </summary>
         /// <param name="title"></param>
         /// <param name="desc"></param>
@@ -92,6 +92,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             BoardMapper.Instance.Update(boardID, "taskID", taskID);
             return previd;
         }
+
         internal Response AssignTask(string email,int columnOrdinal, int taskId, string emailAssignee)
         {
             Task task = columns[columnOrdinal].GetTask(taskId);
@@ -158,6 +159,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     }
                 }*/
 
+        /// <summary>
+        /// this function is in charge of limiting the columns
+        /// </summary>
+        /// <param name="colomunIDX"></param>
+        /// <param name="limit"></param>
+        /// <exception cref="Exception"></exception>
         public void LimitColumn(int colomunIDX, int limit) //can we assume the user will not limit the column 
         {
             if (!columns[colomunIDX].SetColumnLimit(limit))
@@ -167,12 +174,26 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         }
 
+        /// <summary>
+        /// this function changes a column name
+        /// </summary>
+        /// <param name="columnIDX"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public string RenameColumn(int columnIDX, string name)
         {
             columns[columnIDX].SetName(name);
             return "success";   
         }
-
+        
+        /// <summary>
+        /// this function updates the date that some task is expired
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="email"></param>
+        /// <param name="newDue"></param>
+        /// <exception cref="Exception"></exception>
         public void UpdateTaskDue(int taskID, int columnOrdinal,string email, DateTime newDue)
         {
             Task task= null;
@@ -207,6 +228,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         }
 
+        /// <summary>
+        /// this function modify the descreption we have on some task
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="email"></param>
+        /// <param name="newDesc"></param>
+        /// <exception cref="Exception"></exception>
         public void UpdateTaskDesc(int taskID,int columnOrdinal, string email,string newDesc)
         {
             Task task = null;
@@ -228,7 +257,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
 
 
-
+        /// <summary>
+        /// this function change the title of some task
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <param name="email"></param>
+        /// <param name="newTitle"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <exception cref="Exception"></exception>
         public void UpdateTaskTitle(int taskID, string email, string newTitle, int columnOrdinal)
         {
             Task task = null;
@@ -250,6 +286,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 throw new Exception("Task not found");
             }
         }
+
+        /// <summary>
+        /// this function is in charge of making the task continue to the next column
+        /// </summary>
+        /// <param name="taskid"></param>
+        /// <param name="email"></param>
+        /// <exception cref="Exception"></exception>
 
         public void AdvanceTask(int taskid,int columnOrdinal,string email)
         {
@@ -277,7 +320,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             throw new Exception("Task doesn't exist.");
         }
         
-
+        /// <summary>
+        /// checks if a task is still in progress, still working on that task
+        /// </summary>
+        /// <returns></returns>
         public string GetInProgress()
         {
             return columns[1].ToString(); 

@@ -34,6 +34,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
         }
         public Dictionary<int, List<ColumnDTO>> getColumns() { return idMap; }
+
+        /// <summary>
+        /// loads a chunck od data to our column tabls in the db
+        /// </summary>
         public void loadData()
         {
             idMap.Clear();
@@ -53,6 +57,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             conn.reset();
         }
+
+        /// <summary>
+        /// in charge of deleting a specifec info in the table of columns in the db of our system
+        /// </summary>
+        /// <param name="columns"></param>
         public void deleteData(Dictionary<string,List<ColumnDTO>> columns)
         {
             string UpdateQuery = "UPDATE Columns SET boardName =: boardName, ordinal =: ordinal, columnName =: columnName,limit =: limit";
@@ -80,6 +89,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             idMap.Clear();
         }
 
+        /// <summary>
+        /// this function adds information to the column table
+        /// </summary>
+        /// <param name="column"></param>
         public void addData(ColumnDTO column)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -100,6 +113,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.ExecuteNonQuery ();
         }
 
+        /// <summary>
+        /// this function deletes a specefic column from the table in the data base
+        /// </summary>
+        /// <param name="v"></param>
         internal void RemoveColumn(int v)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -111,6 +128,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
+
+        /// <summary>
+        /// this function change data in the columns table
+        /// </summary>
+        /// <param name="boardID"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="attributeValue"></param>
         public void Update(int boardID, int ordinal,string attributeName, object attributeValue)
         {
             SQLiteCommand cmd = conn.prepare();
