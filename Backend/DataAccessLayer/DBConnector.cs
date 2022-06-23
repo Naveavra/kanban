@@ -141,7 +141,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             return conn;
         }
-
+        
         /// <summary>
         /// this function reads the data from a specific table
         /// </summary>
