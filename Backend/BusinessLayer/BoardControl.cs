@@ -288,8 +288,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }*/
 
         
-        
-        public Response GetColumnsByName(string email, string ColumnName)
+
+/*        public Response GetColumnsByName(string email, string ColumnName)
         {
             if (ColumnName.Equals("BackLog"))
             {
@@ -305,14 +305,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             return new Response(new List<Task>());
 
-        }
+        }*/
         /// <summary>
         /// 
         /// </summary>
         /// <param name="email"></param>
         /// <param name="coulumnID"></param>
         /// <returns></returns>
-        private Response GetColumnForAllBoards(string email, int coulumnID)
+/*        private Response GetColumnForAllBoards(string email, int coulumnID)
         {
             //TODO CHECK WHY CREATING LIST TWICE
             List<Task> result = new List<Task>();
@@ -324,7 +324,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 }
             }
             return new Response(result);
-        }
+        }*/
 
         internal Response GetInProgress(string email)
         {

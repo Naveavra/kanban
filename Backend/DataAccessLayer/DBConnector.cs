@@ -147,6 +147,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
+
         public SQLiteDataReader readData(string field)
         {
             SQLiteCommand sqlite_cmd;
