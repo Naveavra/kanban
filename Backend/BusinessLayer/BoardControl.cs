@@ -278,6 +278,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }*/
 
         
+        
         public Response GetColumnsByName(string email, string ColumnName)
         {
             if (ColumnName.Equals("BackLog"))
@@ -353,7 +354,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             b.UpdateTaskDue(taskID,columnOrdinal, email, newDue);
         }
         /// <summary>
-        /// 
+        /// modify the information we have on some task
         /// </summary>
         /// <param name="email"></param>
         /// <param name="boardName"></param>

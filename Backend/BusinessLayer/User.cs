@@ -25,7 +25,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
 
         /// <summary>
-        /// login
+        /// login into our system with some user
         /// </summary>
         /// <param name="pw"></param>
         /// <exception cref="Exception"></exception> user is already logged or doesnt exist
@@ -59,7 +59,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             logged = false;
         }
-        // checks if a new password is different from previous one.
+
+        /// checks if a new password is different from previous one.
         public string CheckNewPW(string newPW)
         {
             if (newPW == password)

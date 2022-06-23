@@ -20,6 +20,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             idMap = new Dictionary<string, UserDTO>();
         }
         public Dictionary<string, UserDTO> getUsers() { return idMap; }
+
+        /// <summary>
+        /// adds more info into users table in our db
+        /// </summary>
+        /// <param name="user"></param>
         public void addData(UserDTO user)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -38,6 +43,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             InsertOrIgnore += string.Format("VALUES(@{email},@{password})", user.email, user.password);
             conn.ExecuteNonQuery(InsertOrIgnore);*/
         }
+
+        /// <summary>
+        /// loads the basic data into users table in our db
+        /// </summary>
         public void loadData() {
             if (getUsers().Count!=0)
             {
@@ -53,6 +62,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             conn.reset();
         }
+
+        /// <summary>
+        /// this function deletes the data in user table
+        /// </summary>
+        /// <returns></returns>
         public Response deleteData()
         {
             string UpdateQuery = "UPDATE Users SET email =: email,password =: password WHERE email =: email";

@@ -38,6 +38,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             return conn;
         }
+
+        /// <summary>
+        /// this function purpose is to delete data\tables from the db
+        /// </summary>
         public void RemoveTables()
         {
             SQLiteCommand cmd = prepare();
@@ -56,6 +60,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.ExecuteNonQuery();
             CreateTables(conn);
         }
+
+        /// <summary>
+        /// this function manage the creating of all the tables of data
+        /// </summary>
+        /// <param name="conn"> the connection to the db</param>
         internal void CreateTables(SQLiteConnection conn)
         {
             /*if (!File.Exists(tempPath))
@@ -108,12 +117,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             sqlite_cmd.CommandText = Createsql;
             sqlite_cmd.ExecuteNonQuery();
 
-            
-            
-                
-            //}
-
         }
+
+        /// <summary>
+        /// this function makes the connection 
+        /// </summary>
+        /// <returns></returns>
         internal SQLiteConnection CreateConnection()
         {
 
@@ -132,6 +141,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             return conn;
         }
+
+        /// <summary>
+        /// this function reads the data from a specific table
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         public SQLiteDataReader readData(string field)
         {
             SQLiteCommand sqlite_cmd;
@@ -139,6 +154,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             sqlite_cmd.CommandText = $"SELECT * FROM {field}";
             return sqlite_cmd.ExecuteReader();
         }
+        /// <summary>
+        /// this functiom is in charge of reading a specific piece of data from a specific column
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SQLiteDataReader readDataWhere(string tableName,string field,string value)
         {
             SQLiteCommand sqlite_cmd;

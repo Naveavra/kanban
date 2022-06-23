@@ -31,7 +31,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
         }
         
-        
+    
         internal int GetLastID()
         {
             int ans = 0;
@@ -53,6 +53,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             boardUserMap = new Dictionary<string, List<BoardUserDTO>>();
         }
         public Dictionary<string, List<BoardDTO>> getBoards() { return idMap; }
+
+        /// <summary>
+        /// this function loads the necessary data for the system 
+        /// </summary>
         public void loadData()
         {   //if(loaded) return;
             idMap.Clear();
@@ -120,6 +124,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         }
 
+        /// <summary>
+        /// this function remove a chunk of data from the boards in the system
+        /// </summary>
+        /// <param name="boards"></param>
         public void deleteData(Dictionary<string,List<BoardDTO>> boards)
         {
             foreach(List<BoardDTO> board in idMap.Values)
@@ -152,7 +160,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         }
 
         
-
+        /// <summary>
+        /// this function is in charge of changing a piece of data in the system
+        /// </summary>
+        /// <param name="BoardID"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="attributeValue"></param>
         public void Update(int BoardID, string attributeName, object attributeValue)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -164,6 +177,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
+        
+        /// <summary>
+        /// this function expands the data we have
+        /// </summary>
+        /// <param name="board"></param>
         public void addData(BoardDTO board)
         {
             try
@@ -194,6 +212,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             
         }
+
+        /// <summary>
+        /// this function adds a specifec chunck of data to the table 
+        /// </summary>
+        /// <param name="buDTO"></param>
         public void addBoardUser(BoardUserDTO buDTO)
         {
             //insert into boardUsers
@@ -207,6 +230,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
+
+        /// <summary>
+        /// this function is in charge of deleting from the table of boardusers
+        /// </summary>
+        /// <param name="buDTO"></param>
         public void deleteBoardUser(BoardUserDTO buDTO)
         {
             SQLiteCommand cmd = conn.prepare();
@@ -218,7 +246,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-     
+        
+        /// <summary>
+        /// this function deletes a specific board from the board table
+        /// </summary>
+        /// <param name="board"></param>
         public void DeleteBoard(Board board)
         {
             string first = "Boards";
