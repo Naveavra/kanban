@@ -28,21 +28,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             GetReady();
             Console.WriteLine("-------- Login/Logout/Registration Tests ---------\n");
             UserOpTests();
-            /*Console.WriteLine("-------- Board Tests ---------\n");
+            Console.WriteLine("-------- Board Tests ---------\n");
             BoardTests();
             Console.WriteLine("-------- Task Tests ---------\n");
             taskTests();
             Console.WriteLine("-------- Column Tests ---------\n");
             ColumnTests();
             Console.WriteLine("-------- Delete/Load Data Tests ---------\n");
-            DeleteLoadTest();*/
-
-            /*Console.WriteLine("-------- Assignment Tests ---------\n");
-            AssignTest();*/
+            DeleteLoadTest();
+            Console.WriteLine("-------- Assignment Tests ---------\n");
+            AssignTest();
         }
         private void DeleteLoadTest()
         {
-            GetReady(); //deletes all tables
             facade.DeleteData();
             //facade.DeleteData();//clearing all lists in ram
             facade.DeleteData();
@@ -382,7 +380,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         }
         private void BoardTests()
         {
-            facade.Login("naveav95@gmail.com", "AAAAAAAa9");
+            facade.Login("naveav95@gmail.com", "Aa123456");
             Console.WriteLine(counter.ToString() + "valid addboard ");
             Console.WriteLine(counter.ToString() + "." + facade.AddBoard("naveav95@gmail.com", "nitutz")); //10 valid addboard
             Console.WriteLine("-----------------------\n");
@@ -411,21 +409,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         }
         private void UserOpTests()
         {
-            Console.WriteLine("NAVE USE THE TEST BELOW TO FIND OUT WHY REGISTER FAILS");
-            Console.WriteLine(counter.ToString() + "." + facade.Register("naveav95@gmail.com", "AAAAAAAa9"));//0 Valid registraion
-            counter++;
-            Console.WriteLine(facade.GetUserBoards("naveav95@gmail.com"));
-            Console.WriteLine(counter.ToString() + "." + facade.Register("naveav95@gmail.com", "AAAAAA6a9"));//0 Valid registraion
-            counter++;
-            Console.WriteLine(facade.Register(null, null));
-            Console.WriteLine("-----------------------\n");
-            Console.WriteLine(counter.ToString() + "." + facade.Register("navav98@gmail.com", "1234567"));//0 Invalid registraion
-            counter++;
-            Console.WriteLine("-----------------------\n");
-            Console.WriteLine(counter.ToString() + "." + facade.Register("navav97@gmail.com", "Aא12345"));//0 Valid registraion
-            counter++;
             Console.WriteLine(counter.ToString() + " Valid registration Should Succeed");
-            Console.WriteLine(counter.ToString() + "." + facade.Register("naveav96@gmail.com", "Aa1234"));//1 Valid registraion
+            Console.WriteLine(counter.ToString() + "." + facade.Register("naveav95@gmail.com", "Aa123456"));//1 Valid registraion
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " Invalid registration, email isnt unique");
@@ -433,7 +418,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " valid registration");
-            Console.WriteLine(counter.ToString() + "." + facade.Register("navv95@gmail.com", "Aaא123456"));//2 Invalid registraion
+            Console.WriteLine(counter.ToString() + "." + facade.Register("navv95@gmail.com", "Aa123456"));//2 Invalid registraion
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " Invalid Login Should Fail");

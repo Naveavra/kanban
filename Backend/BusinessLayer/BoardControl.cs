@@ -13,8 +13,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     internal class BoardControl
     {
         public int BoardCounter; //this counter will give every new board his id
-        log4net.ILog logger = Log.GetLogger();
-        Validator validator = Validator.Instance; //dan
+        Validator validator = Validator.Instance; 
         Dictionary<string, List<Board>> boards; //borads pool <name, Board>
         Dictionary<Board, List<string>> boardUsers;
         private ColumnMapper columnMapper{get;}
@@ -29,7 +28,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             columnMapper.loadData();
             boardMapper.loadData();*/
             }
-
+        /// <summary>
+        /// checks if the user have other boards with the same name
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <returns></returns> true if he have otherwise not
         public bool isUniqueBoardName(string email,string boardName)
         {
             try 
@@ -42,10 +46,15 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             
         }
+        /// <summary>
+        /// adds new board for the user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <exception cref="Exception"></exception>throws expection if the user have a board with the same name
         public void AddBoard(string email, string boardName){   
         if(String.IsNullOrWhiteSpace(boardName) || String.IsNullOrEmpty(boardName))
         {
-            logger.Warn("Cannot add an invalid board name");
             throw new Exception("Invalid Board Name");
         }
         
@@ -64,14 +73,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             boardUsers[board].Add(email);
             boardMapper.addData(new BoardDTO(board));
             boardMapper.addBoardUser(new BoardUserDTO(board.getID(), email)); 
-            logger.Info("Board added succesfully");
         }
         else 
         { 
-            logger.Warn("A board with tha name already exists");
             throw new Exception("Board with this name already exists");
         }
     }
+        
         internal int GetAndIncrement()
         {
 /*            BoardCounter = boardMapper.GetLastID();
@@ -79,6 +87,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             BoardCounter++;
             return prev;
         }
+        /// <summary>
+        /// assign the task for some bord memeber, if its unassigned it can be dobe by anyone
+        ///other wise it can be done only by the assignee
+        /// </summary>
+        /// <param name="email"></param> the user that wants to assign
+        /// <param name="boardName"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="taskId"></param>
+        /// <param name="emailAssignee"></param> the assignee
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception> if the user isnt a board member or the  user try to assigned can do it(see above)
         public Response AssignTask(string email,string boardName, int columnOrdinal, int taskId, string emailAssignee)
         {
             if (validator.ValidateEmailUsingRegex(emailAssignee))
@@ -89,14 +108,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     Board b = r.ReturnValue as Board;
                     if (!boardUsers[b].Contains(emailAssignee))
                     {
-                        return new Response("The user has not yet joined the board",true);
+                        throw new Exception("The user has not yet joined the board");
                     }
                     
                     return b.AssignTask(email,columnOrdinal, taskId, emailAssignee);
                 }
                 return r;
             }
-            return new Response("Assigned email doesn't exist",true);
+            throw new Exception("Assigned Email doesn't exist");
         }
         public Response GetBoard(string email,string boardname) //new function uses reponse to let us know if the board exists
         {
@@ -110,8 +129,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 }
             }
             
-            logger.Warn($"Board: {boardname}, doesn't exist.");
-            throw new Exception("Board doesn't exist");   
+            throw new Exception($"Board: {boardname}, doesn't exist.");   
         }
         /*public bool isOwner(string boardName, string email)
         {
@@ -145,15 +163,20 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     }
                 }
             }
-            logger.Warn("BoardID: " + id + "doesn't exist.");
-            return new Response("Board doesnt exist", true);
+            throw new Exception("Board doesnt exist");
         }
 /*        internal Response GetColumnForRel(string email, string boardName, int columnOrdinal)
         {
             Board b = GetBoard(email, boardName).ReturnValue as Board;
             return GetBoard(email, boardName).GetColumnForReal(columnOrdinal);
         }*/
-
+        /// <summary>
+        /// gets all the tasks in the coumn
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <returns></returns> response with a list off al the column's tasks
         internal Response GetColumn(string email, string boardName, int columnOrdinal)
         {
             Response r = GetBoard(email, boardName);
@@ -182,7 +205,15 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }*/
 
        
-        
+        /// <summary>
+        /// adds new task
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardname"></param>
+        /// <param name="title"></param>
+        /// <param name="desc"></param>
+        /// <param name="duedate"></param>
+        /// <exception cref="Exception"></exception>
         public void AddTask(string email, string boardname,string title, string desc, DateTime duedate)
         {
 
@@ -200,7 +231,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
       
         }
-
+        /// <summary>
+        /// advance the task to next column unsless its already done
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="taskId"></param>
         internal void AdvanceTask(string email, string boardName, int taskId)
         {
             Response r = GetBoard(email, boardName);
@@ -241,6 +277,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         }*/
 
+        
         public Response GetColumnsByName(string email, string ColumnName)
         {
             if (ColumnName.Equals("BackLog"))
@@ -258,7 +295,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return new Response(new List<Task>());
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="coulumnID"></param>
+        /// <returns></returns>
         private Response GetColumnForAllBoards(string email, int coulumnID)
         {
             //TODO CHECK WHY CREATING LIST TWICE
@@ -278,7 +320,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             List<Task> inprogress = new List<Task>(); 
             if (!boards.ContainsKey(email) || boards[email].Count==0)
             { 
-                logger.Info("User doesn't have a board with that name yet");
                 return new Response(inprogress);
             }
             foreach(Board b in boards[email])
@@ -298,75 +339,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             boardUsers.Clear();
             DBConnector.Instance.RemoveTables();
             return new Response();
-            /*Dictionary<string,List<BoardDTO>> dtos = new Dictionary<string,List<BoardDTO>>();
-            Dictionary<string, List<ColumnDTO>> cols = new Dictionary<string, List<ColumnDTO>>();
-            Dictionary<string, List<TaskDTO>> tsks = new Dictionary<string, List<TaskDTO>>();
-            foreach (string s in boards.Keys)
-            {
-                List<BoardDTO> b = new List<BoardDTO>();
-                foreach(Board board in boards[s])
-                {
-                    b.Add(new BoardDTO(board.getID(), board.name, board.boardowner, board.getID()));
-                    List<ColumnDTO> col = new List<ColumnDTO>();
-                    int i = 0;
-                    foreach(Column c in board.columns)
-                    {
-                        col.Add(new ColumnDTO(c.getName(), c.getlimit(), i, board.getID()));
-                        i++;
-                        List<TaskDTO> tsk = new List<TaskDTO>();
-                        foreach(Task t in c.GetTasks().Values)
-                        {
-                            tsk.Add(new TaskDTO(t,board.getID(),i,board.boardowner));
-                        }
-                        tsks.Add(board.name, tsk);
-                    }
-                    cols.Add(board.name, col);
-                }
-                dtos.Add(s, b);
-            }
-            try
-            {
-                boardMapper.deleteData(dtos);
-                return new Response("Data Deleted Successfully");
-            }catch(Exception e)
-            {
-                return new Response("Something went wrong in delete BoardData board-control");
-            }*/
-            
-            
         }
 
-        /*        public string GetDone(string email, string BoardName)
-                {
-                    string res = "";
-                    foreach (Board b in boards[email].Values)
-                    {
-                        res += b.GetDone();
-                    }
-                    return res;
-
-                }*/
-
-        /*        public string ToInProgress(string email, string boardname, int taskID)
-                {
-                    return GetBoard(email, boardname).ToInProgress(taskID);
-                }
-
-                public string ToIsDone(string email, string boardname, int taskID)
-                {
-                    return GetBoard(email, boardname).ToIsDone(taskID);
-                }
-
-                public string LimitColumn(string email, string boardName, int columnIDX, int limit)
-                {
-                    return GetBoard(email, boardName).LimitColumn(columnIDX, limit);
-                }
-
-                public string RenameColumn(string email, string boardName, int columnIDX, string newName)
-                {
-                    return GetBoard(email, boardName).RenameColumn(columnIDX, newName);
-                }
-        */
+        ///updating the task due date unless its done
         public void UpdateTaskDue(string email, string boardName, int taskID, int columnOrdinal, DateTime newDue)
         {
             Response r = GetBoard(email, boardName);
@@ -377,7 +352,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             Board b = r.ReturnValue as Board;
             b.UpdateTaskDue(taskID,columnOrdinal, email, newDue);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="taskID"></param>
+        /// <param name="newDesc"></param>
         public void UpdateTaskDesc(string email, string boardName,int columnOrdinal, int taskID, string newDesc)
         { 
             Response r = GetBoard(email, boardName);
@@ -388,7 +370,15 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 b.UpdateTaskDesc(taskID,columnOrdinal, email, newDesc);
             }            
         }
-
+        /// <summary>
+        /// updating task title
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="taskID"></param>
+        /// <param name="newTitle"></param>
+        /// <exception cref="Exception"></exception>throws expection if done ir doesnt exist
         public void UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskID, string newTitle)
         {
             validator.ValidateTaskTitle(newTitle); 
@@ -400,7 +390,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             Board b = r.ReturnValue as Board;
             b.UpdateTaskTitle(taskID, email, newTitle, columnOrdinal);
         }
-
+        /// <summary>
+        /// delete the board and his task
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="BoardName"></param>
+        /// <exception cref="Exception"></exception>
         public void RemoveBoard(string email, string BoardName)
         {
             Response r = GetBoard(email, BoardName);
@@ -409,16 +404,30 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 boards[email].Remove(b);
                 boardUsers.Remove(b);
+                RemoveFromAllUsers(b);
                 boardMapper.DeleteBoard(b);
                 columnMapper.RemoveColumn(b.getID());
-                logger.Info("Board removed successfully");
                 return;
             }
             throw new Exception("Cannot remove board, user is not the Board owner.");
             
         }
-         
-
+        internal void RemoveFromAllUsers(Board b)
+        {
+            foreach(string email in boards.Keys)
+            {
+                foreach(Board board in boards[email])
+                {
+                    if (board.getID() == b.getID())
+                        boards[email].Remove(board);
+                }
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public Response GetBoardsIDs(string email)
         {
             List<int> ids = new List<int>();
@@ -442,15 +451,20 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             List<string> lst1 = new List<string>();
             return new Response(lst1);
         }
-
+        /// <summary>
+        /// limit the column capacity
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="limit"></param> new limit
         public void LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
             Board b= GetBoard(email, boardName).ReturnValue as Board;
             b.LimitColumn(columnOrdinal, limit);
             columnMapper.Update(b.getID(), columnOrdinal, "Lim", limit);
-            logger.Info("Successfully Limited column");   
         }
-
+        
         public Response GetCloumnLimit(string email, string boardName, int columnOrdinal)
         {
             Board board = GetBoard(email, boardName).ReturnValue as Board;
@@ -466,8 +480,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
 
 
-        // NEW IMPL HERE MILESTONE 2
-    
+        
+        /// <summary>
+        /// loading the data
+        /// </summary>
         public void LoadData()
         {
             
@@ -522,6 +538,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                         
         
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardID"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         internal Response JoinBoard(string email, int boardID)
         {
             /*Board board = null;
@@ -545,7 +569,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 return new Response("the user already has a board with the same name",true);
             return Add2Boards(email, ref board);
         }
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardID"></param>
+        /// <returns></returns>
         internal Response LeaveBoard(string email, int boardID)
         {
             Response response = getBoardByID( boardID);
@@ -562,9 +591,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 boardMapper.deleteBoardUser(new BoardUserDTO(b.getID(), email));
                 return new Response(null);
             }
-            return new Response("Cannot leave board user is the owner.",true);
-            
+            throw new Exception("Cannot leave board user is the owner.");            
         }
+        
+        ///
         internal Response changeOwnership(string email,string boardname,string newOwnerEmail)
         {
             Response res = GetBoard(email, boardname);
@@ -578,11 +608,16 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     boardMapper.addData(boardDTO);
                     return new Response(null);
                 }
-                return new Response("User is not board owner");
-                
+                throw new Exception("User is not board owner");                
             }
-            return res.ErrorOccured() ? res : res2 ;
+            return res.ErrorOccured() ? res.Exception() : res2.Exception() ;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         private Response Add2Boards(string email, ref Board b)
         {
             if (!boards.ContainsKey(email))

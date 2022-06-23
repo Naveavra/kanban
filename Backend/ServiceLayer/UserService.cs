@@ -1,6 +1,7 @@
 
 using IntroSE.Kanban.Backend.BusinessLayer;
 using System;
+using IntroSE.Kanban.Backend.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
          public static UserService Instance { get { return instance ?? (instance = new UserService()); } }*/
         UserControl userControl;
+        log4net.ILog logger = Log.GetLogger();
         public UserService()
         {
             userControl = new UserControl();
@@ -38,10 +40,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 userControl.Register(newEmail, password);
+                logger.Info($"Registered Successfully, {email}");
                 return new Response().Serialize();
 
             }catch (Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
             
@@ -58,9 +62,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 userControl.Login(email, password);
+                logger.Info($"Login Successfull, {email}");
                 return new Response(email).Serialize();
             }catch (Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
             
@@ -76,10 +82,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 userControl.Logout(email);
+                logger.Info($"Logout Successfull, {email}");
                 return new Response().Serialize();
             }
             catch (Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
             
@@ -93,12 +101,16 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         }
         public Response LoadData()
         {
-            return userControl.LoadData();
+            Response r = userControl.LoadData();
+            logger.Info("Loaded Data Successfully");
+            return r;
         }
 
         public string DeleteData()
         {
-            return userControl.DeleteData().Serialize();
+            string result = userControl.DeleteData().Serialize();
+            logger.Info("Deleted Data Successfully");
+            return result;
         }
 
         internal bool Registered(string email)

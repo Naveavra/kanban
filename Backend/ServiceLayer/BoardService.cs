@@ -1,5 +1,6 @@
 using IntroSE.Kanban.Backend.BusinessLayer;
 using IntroSE.Kanban.Backend.DataAccessLayer;
+using IntroSE.Kanban.Backend.Utility;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     public class BoardService
     {
         BoardControl boardControl;
+        log4net.ILog logger = Log.GetLogger();
+
         /// <summary>
         /// 
         /// </summary> Method that will add a task to a certain board
@@ -42,10 +45,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AddTask(email, boradname, title, desc, dueDate);
+                logger.Info("Added Task successfully");
                 return new Response().Serialize();
             }
             catch (Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message, true).Serialize();
             }
             
@@ -57,10 +62,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AddBoard(email, name);
+                logger.Info("Added board successfully");
                 return new Response().Serialize();
             }
             catch (Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
             
@@ -73,10 +80,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.UpdateTaskDue(email, boardName, taskID,columnOrdinal, newDate);
+                logger.Info("Updated Task Due successfully");
                 return new Response().Serialize();
             }
             catch(Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
         }
@@ -87,10 +96,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.GetColumn(email, boardName, columnOrdinal).Serialize();
+                string result = boardControl.GetColumn(email, boardName, columnOrdinal).Serialize();
+                logger.Info("Got Column Successfully");
+                return result;
             }
             catch(Exception e)
             {
+                logger.Warn(e.Message);
                 return new Response(e.Message,true).Serialize();
             }
             
@@ -103,10 +115,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.UpdateTaskTitle(email, boardName,columnOrdinal, taskID, newTitle);
+                logger.Info("Updated Task Title");
                 return new Response().Serialize();
             }
             catch (Exception e)
             {
+                logger.Warn(e.Message);
                 return new Response(e.Message, true).Serialize();
             }
             
@@ -127,10 +141,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.UpdateTaskDesc(email, boardName,columnOrdinal, taskID, NewDescription);
+                logger.Info("Updated Task Description.");
                 return new Response().Serialize();
             }
             catch(Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message, true).Serialize();
             }
             
@@ -143,10 +159,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AdvanceTask(email, boardName, taskId);
+                logger.Info("Advanced Task Successfully");
                 return new Response().Serialize();
             }
             catch(Exception e)
             {
+                logger.Warn(e.Message);
                 return new Response(e.Message, true).Serialize();
             }
             
@@ -163,10 +181,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.RemoveBoard(email, boardName);
+                logger.Info("Removed Board Successfully");
                 return new Response().Serialize();
             }
             catch(Exception e)
             {
+                logger.Warn(e.Message);
                 return new Response(e.Message,true).Serialize();
             }
             
@@ -200,10 +220,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.GetBoard(email, boardname).Serialize();
+                string result = boardControl.GetBoard(email, boardname).Serialize();
+                logger.Info($"Got Board Successfully {boardname}");
+                return result;
             }
             catch (Exception ex)
             {
+                logger.Warn(ex.Message); 
                 return new Response(ex.Message,true).Serialize();
             }
             
@@ -215,10 +238,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.GetInProgress(email).Serialize();
+                string result = boardControl.GetInProgress(email).Serialize();
+                logger.Info("Action InProgressTasks Succeeded");
+                return result;
             }
             catch(Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
 
@@ -238,10 +264,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.LimitColumn(email, boardName, columnOrdinal, limit);
+                logger.Info("Limited Column.");
                 return new Response().Serialize();
             }
             catch(Exception e)
             {
+                logger.Warn(e.Message);
                 return new Response(e.Message, true).Serialize();
             }
             
@@ -252,10 +280,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.GetCloumnLimit(email, boardName, columnOrdinal).Serialize();
+                string result = boardControl.GetCloumnLimit(email, boardName, columnOrdinal).Serialize();
+                logger.Info("Got Column Limit");
+                return result;
             }
             catch(Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
             
@@ -282,10 +313,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.GetColumnName(email, boardName, columnOrdinal).Serialize();
+                string result = boardControl.GetColumnName(email, boardName, columnOrdinal).Serialize();
+                logger.Info("Got Column Name");
+                return result;
             }
             catch (Exception ex)
             {
+                logger.Warn(ex.Message);
                 return new Response(ex.Message,true).Serialize();
             }
         }
@@ -303,10 +337,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.LoadData();
+                logger.Info("Loaded Boards Data Successfully");
                 return new Response().Serialize();
             }
             catch(Exception e)
             {
+                logger.Warn(e.Message);
                 return new Response(e.Message,true).Serialize();
             }
         }
@@ -321,10 +357,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.JoinBoard(email, boardID).Serialize();
+                logger.Info("Joined board successfully");
                 return new Response(null).Serialize();
             }
             catch(Exception e)
             {
+                logger.Warn(e.Message) ;
                 return new Response(e.Message, true).Serialize();
             }
         }
@@ -339,9 +377,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.LeaveBoard(email, boardID).Serialize();
+                string result = boardControl.LeaveBoard(email, boardID).Serialize();
+                logger.Info("Left board successfully");
+                return result;
             }
-            catch (Exception ex) { return new Response(ex.Message, true).Serialize(); }
+            catch (Exception ex) {
+                logger.Warn(ex.Message);
+                return new Response(ex.Message, true).Serialize(); }
 
         }
 
@@ -350,9 +392,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
             try
             {
-                return boardControl.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee).Serialize();
+                string result = boardControl.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee).Serialize();
+                logger.Info("Assigned Task Successfully");
+                return result;
             }
-            catch(Exception ex) { return new Response(ex.Message,true).Serialize(); }
+            catch(Exception ex) {
+                logger.Warn(ex.Message) ;
+                return new Response(ex.Message,true).Serialize(); }
         }
         /// <summary>
         /// this method will return all the user's boards names
@@ -363,9 +409,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.GetBoardsIDs(email).Serialize();
+                string result = boardControl.GetBoardsIDs(email).Serialize();
+                logger.Info("Got Board ID's");
+                return result;
             }
-            catch (Exception ex) { return new Response(ex.Message, true).Serialize(); }
+            catch (Exception ex) {
+                logger.Warn(ex.Message);
+                return new Response(ex.Message, true).Serialize(); }
 
         }
 
@@ -373,9 +423,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                return boardControl.changeOwnership(currentOwnerEmail, boardName, newOwnerEmail).Serialize();
+                string result = boardControl.changeOwnership(currentOwnerEmail, boardName, newOwnerEmail).Serialize();
+                logger.Info("Transfered Ownership");
+                return result;
             }
-            catch (Exception ex) { return new Response(ex.Message, true).Serialize(); }
+            catch (Exception ex) {
+                logger.Warn(ex.Message);
+                return new Response(ex.Message, true).Serialize(); }
 
         }
 

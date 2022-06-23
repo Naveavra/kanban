@@ -13,7 +13,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     internal class Board
     {
         int boardID;
-        log4net.ILog logger = Log.GetLogger();
         public string name { get; set; }
         public List<Column> columns { get; set; }
         public string boardowner { get; set; }
@@ -42,6 +41,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             // column[0]=backlog, [1]=inprogress, [2]=isdone
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public List<Task> getAssignedInProgress(string email)
         {
             List<Task> assigned = new List<Task>();
@@ -101,9 +106,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     task.setAssignee(emailAssignee);
                     return new Response();
                 }
-                return new Response("Assign failed, can only assign by the assignee",true);
+                throw new Exception("Assign failed, can only assign by the assignee");
             }
-            return new Response("No such Task",true);
+            throw new Exception("Task doesn't exist.");
         }
         internal void unAssign(string email)
         {
@@ -157,7 +162,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             if (!columns[colomunIDX].SetColumnLimit(limit))
             {
-                logger.Warn("Cannot limit column");
                 throw new Exception("column capacity exceeds the new limitation please choose higher limitation");
             }
 
@@ -177,7 +181,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 task = columns[columnOrdinal].GetTask(taskID);
                 if (columnOrdinal == 2)
                 {
-                    logger.Warn("Task is already done.");
                     throw new Exception("Task is already done G");
                 }
                 if (task != null)
@@ -187,8 +190,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 }
 
             }
-            logger.Warn("Task doesn't exist, Task ID: "+taskID);
-            throw new Exception("Task doesn't exist");
+            throw new Exception($"Task doesn't exist, Task ID: {taskID}");
         }
 
 
@@ -200,11 +202,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             else
             {
-                /*List<Task> tasks = new List<Task>();
-                foreach (Task task in )
-                {
-                    tasks.Add(task);
-                }*/
                 return new Response(columns[columnOrdinal].GetTasks().Values);
             }
 
@@ -217,18 +214,15 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 task = columns[columnOrdinal].GetTask(taskID);
                 if (columnOrdinal == 2)
                 {
-                    logger.Warn("Cannot edit finished tasks.");
                     throw new Exception("Task is already Done G");
                 }
                 if (task != null)
                 {
                     task.EditTaskDesc(email, newDesc);
-                    logger.Info("Updated Task description.");
                     return;
                 }
                 
             }
-            logger.Warn("Task not found");
             throw new Exception("Task not found");
         }
 
@@ -243,19 +237,16 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 task = columns[columnOrdinal].GetTask(taskID);
                 if (columnOrdinal == 2)
                 {
-                    logger.Warn("Task is already Done");
                     throw new Exception("Task is already Done G");
                 }
                 if (task != null)
                 {
                     task.EditTaskTitle(email, newTitle);
-                    logger.Info("Task title edited successfully");
                     return;
                 }
             }
             else
             { 
-                logger.Warn("Task not found");
                 throw new Exception("Task not found");
             }
         }
@@ -272,21 +263,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                         if (task.getAssignee() != email)
                             throw new Exception("Task isn't assigned to this user.");
                         columns[i].RemoveTask(taskid); // you dont want to delete before you check wether you can add the task or not.
-                        logger.Info("Advanced task successfully.");
                         TaskMapper.Instance.Update(taskid, this.boardowner, "ordinal", i + 1);
                         columns[i + 1].AddTask(task,this.boardID,this.boardowner);
                         return;
                     }
-                    logger.Warn("Cannot advance Task, column has reached it's max capacity");
                     throw new Exception("Cannot advance Task, Column has reached it's max capacity.");
                     }
                 }
             if (columns[2].GetTasks().ContainsKey(taskid))
             {
-                logger.Warn("Task is already Done");
                 throw new Exception("Task is already Done G");
             }
-            logger.Warn("Task doesn't exist.");
             throw new Exception("Task doesn't exist.");
         }
         

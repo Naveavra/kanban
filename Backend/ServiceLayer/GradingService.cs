@@ -335,8 +335,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
-            currentOwnerEmail = currentOwnerEmail.ToLower();
-            newOwnerEmail = newOwnerEmail.ToLower();
             return facade.TransferOwnership(currentOwnerEmail, newOwnerEmail, boardName);
         }
     }

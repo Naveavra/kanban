@@ -12,7 +12,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 {
     internal class Column
     {
-        log4net.ILog logger = Log.GetLogger();
         private string ColumnName;
         private int limit = -1;
         private Dictionary<int, Task> Tasks;
@@ -26,10 +25,15 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             Mapper = TaskMapper.Instance;
         }
 
+        ///
         public int getlimit()
         {
             return limit;
         }
+        /// <summary>
+        /// checks f its possible to add new task or we already reached the column limit
+        /// </summary>
+        /// <returns></returns> true if we can add otherwise false
         public bool canAdd()
         {
             if (Tasks.Count < limit || limit == -1)
@@ -38,6 +42,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             return false;
         }
+        ///
         public bool SetColumnLimit(int limit)
         {
             if (limit < Tasks.Count || limit % 1 !=0)
@@ -47,17 +52,29 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             this.limit = limit;
             return true;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string getName()
         {
             return ColumnName;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
         public void SetName(string name)
         {
             ColumnName = name;
         }
-
+        /// <summary>
+        /// adds new task to the backlog column in the board
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="boardID"></param>
+        /// <param name="boardOwner"></param> the email of the board owner
+        /// <exception cref="Exception"></exception> throws exception  if we cand add or somehing wrong the the params
         public void AddTask(Task task,int boardID,string boardOwner)
         {
             if ( Tasks.Count() < limit || limit == -1) //if the limit is -1 we can add all the tasks we want
@@ -67,19 +84,20 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     Tasks.Add(task.gettaskID(), task);
                     task.setDTO( new TaskDTO(task, boardID, 0, boardOwner));
                     Mapper.addData(task.DTO);
-                    logger.Info("Task: "+task.gettitle()+" added Successfully");
                     return;
                 }
-                logger.Warn("Task ID: "+task.gettaskID()+" Already exists.");
                 throw new Exception($"Task ID: {task.gettaskID()} already exists.");                
             }
             else
             {
-                logger.Warn("This column has reached its' max capacity. Please get your shit together blood.");
                 throw new Exception("This column has reached its' max capacity. Please get your shit together blood.");
             }
         }
-
+        /// <summary>
+        /// removes the task
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <returns></returns>
         public string RemoveTask(int taskID)
         {
             if (Tasks.ContainsKey(taskID))
@@ -93,7 +111,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
 
         }
-
+        ///
         public Task GetTask(int taskID)
         {
             if (Tasks.ContainsKey(taskID))
@@ -105,12 +123,16 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 return null;
             }
         }
-
+        /// <summary>
+        /// getter
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<int, Task> GetTasks()
         {
             return Tasks;
         }
         
+        ///
         override
         public string ToString()
         {

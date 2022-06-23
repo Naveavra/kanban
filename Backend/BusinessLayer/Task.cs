@@ -69,6 +69,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return result;
             
         }*/
+
+        /// <summary>
+        /// set the task assignee
+        /// </summary>
+        /// <param name="assignee"></param>
         public void setAssignee(string assignee)
         {
             this.Assignee = assignee;
@@ -77,6 +82,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 DTO.Assignee = assignee;
             }
         }
+
+        ///edit task description
         public void EditTaskDesc(string email,string newDesc)
         {
             if(this.Status.ToString().Equals("Done") || Assignee!=email)
@@ -87,7 +94,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             Description = newDesc;
         }
     
-
+    /// <summary>
+    /// edit the task due date
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="newDue"></param>
+    /// <exception cref="Exception"></exception> if the task is done shouldnt be possible
     internal void EditTaskDueDate(string email,DateTime newDue)
         {
             if (DateTime.Compare(newDue, DateTime.Now) < 0)
@@ -100,6 +112,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             DueDate = newDue;
         }
 
+        ///esit the task title
         internal void EditTaskTitle(string email,string newTitle)
         {
             if(this.Status.ToString().Equals("Done")||Assignee!=email)
@@ -109,6 +122,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             DTO.Title = newTitle;
             Title = newTitle;
         }
+        
+        ///dan
         internal void ChangeStatus(int Stat)
         {
             switch(Stat)
@@ -118,7 +133,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 case 2: this.Status = Status.Done; break;
             }
         }
-
+        /// <summary>
+        /// to string
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return  "Task title: " + Title + "\nTask Due Date: " + "\nTask ID: " + Id + "\nTask Description: " + 

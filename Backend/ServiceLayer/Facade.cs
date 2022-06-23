@@ -260,7 +260,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    Console.WriteLine("Failed loadingData in facade");
+                    Console.WriteLine("Failed loading Data in facade");
                     return new Response("Some Error occured while loading the data", true).Serialize();
                 }
             }

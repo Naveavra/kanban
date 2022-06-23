@@ -13,7 +13,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     {
         private bool logged;
         public string email { get; set; }
-        log4net.ILog logger = Log.GetLogger();
         private string password;
 
         /*        public UserDTO? DTO { get; private set; }*/
@@ -24,6 +23,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             this.email = email;
             this.password = password;
         }
+
+        /// <summary>
+        /// login
+        /// </summary>
+        /// <param name="pw"></param>
+        /// <exception cref="Exception"></exception> user is already logged or doesnt exist
         public void Login(string pw) 
         {
             if (Logged())
@@ -34,16 +39,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 if (!(password == pw))
                 {
-                    throw new Exception("Password is incorrect");
-                    logger.Warn("Password is incorrect. email: " + email + " has failed to login");
-                    //return new Response(email);
+                    throw new Exception("Password is incorrect. email: " + email + " has failed to login");
                 }
-                logger.Info("The user " + email + " Logged In Successfully");
                 logged = true;
             }
             
         }
 
+        ///is the user logged or not
         public bool Logged()
         {
             return logged;
@@ -52,11 +55,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             if (!Logged())
             {
-                logger.Warn($"Error: Cannot logout, User is not logged in. Email: {email}");
                 throw new Exception($"Error: Cannot logout, User is not logged in. Email: {email}");
             }
             logged = false;
-            logger.Info("User successfully logged out.");
         }
         // checks if a new password is different from previous one.
         public string CheckNewPW(string newPW)
@@ -70,6 +71,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 */            return "Success";
 
         }
+
+        /// <summary>
+        /// returns the user password
+        /// </summary>
+        /// <returns></returns>
         public string getPassword()
         {
             return password;

@@ -1,6 +1,5 @@
 ﻿using IntroSE.Kanban.Backend.DataAccessLayer;
 using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
-using IntroSE.Kanban.Backend.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     public class UserControl
     {
         private Dictionary<string, User> users; //<email, User>
-        log4net.ILog logger = Log.GetLogger();
         private UserMapper userMapper { get; set; }
         private Validator validator;
         public UserControl() {
@@ -26,6 +24,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
  /*       private static UserControl instance = null;
         public static UserControl Instance { get { return instance ?? (instance = new UserControl()); } }*/
         
+        /// <summary>
+        /// this function should load the data from the db to the ram
+        /// </summary>
+        /// <returns></returns>empty Response
         public Response LoadData()
         {
             if (users.Count != 0)
@@ -47,6 +49,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             validator.insertUsersFromDB(users);
             return new Response();
         }
+
+        /// <summary>
+        /// user login
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="pw"></param>
+        /// <exception cref="Exception"></exception> if the email doesnt exist or the password is incorrect
         public void Login(string email, string pw)
         {
             //LoadData();
@@ -57,14 +66,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             else 
             {
-                logger.Warn("Error. email: " + email + " doesn't exist");
                 throw new Exception($"Email: {email} Doesn't exist.");
             }
         }
 
 
 
-
+        /// <summary>
+        /// user registraion
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="pw"></param>
         public void Register(string email, string pw)
         {
  //           LoadData();
@@ -72,21 +84,26 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             User user = new User(email, pw);
             users.Add(email, user);
             userMapper.addData(new UserDTO(email, pw, false));
-            logger.Info("User: " + email + ", Registered Successfully");
             Login(email, pw);
         }
-
+        /// <summary>
+        /// user logout
+        /// </summary>
+        /// <param name="email"></param>
+        /// <exception cref="Exception"></exception>
         public void Logout(string email)
         {
             if (!users.ContainsKey(email))
             {
-                logger.Warn("User doesn't exist. Email: "+email);
-                throw new Exception("User doesn't exist");
+                throw new Exception($"User doesn't exist {email}");
             }
             users[email].Logout();
                         
         }
-
+        /// <summary>
+        /// delete all data from the ram and the DB
+        /// </summary>
+        /// <returns></returns> empty Response
         internal Response DeleteData()
         {
             /*Dictionary<string, UserDTO> usrs= new Dictionary<string, UserDTO>();
@@ -100,7 +117,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 //            userMapper.setLoaded(false);
             return new Response();
         }
-
+        /// <summary>
+        /// checks if the user is logged
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns boolean true if logged otherwise false
         internal bool Logged(string email)
         {
             //userMapper.loadData();
@@ -114,6 +135,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
         }
 
+        /// <summary>
+        /// checks if the user is logged
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>boolean true if registered otherwise false
         internal bool Registered(string email)
         {
             email = email.ToLower();

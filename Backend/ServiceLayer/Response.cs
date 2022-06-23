@@ -37,6 +37,11 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             return ErrorMessage != null;
         }
+
+        internal Response Exception()
+        {
+            throw new Exception(ErrorMessage);
+        }
     }
 }
 
