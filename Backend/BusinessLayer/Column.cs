@@ -143,13 +143,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             return res;
         }
-        
-
-        
-
-
-
-        
 
     }
 }
