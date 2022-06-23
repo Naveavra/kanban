@@ -60,8 +60,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             facade.JoinBoard("nadia97@gmail.com", 0);
             facade.AddTask("miki96@gmail.com", "nitutz", "AssignedTask", "lets get this shit over with", new DateTime());
             facade.AddTask("nadia97@gmail.com", "cola", "newTask", "lets get this shit over with", new DateTime());
-            facade.LoadData();
-        }
+/*            facade.LoadData();
+*/        }
         private void GetReady()
         {
             Console.WriteLine("lets go");
@@ -102,11 +102,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " valid join board");
-            Console.WriteLine(counter.ToString() + "." + facade.JoinBoard("naveav96@gmail.com", 1));//43 not valid column id doesnt exist
+            Console.WriteLine(counter.ToString() + "." + facade.JoinBoard("naveav95@gmail.com", 1));//43 not valid column id doesnt exist
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " valid get column limit");
-            Console.WriteLine(counter.ToString() + "." + facade.GetColumnLimit("naveav96@gmail.com","nitutz", 0));//43 not valid column id doesnt exist
+            Console.WriteLine(counter.ToString() + "." + facade.GetColumnLimit("naveav95@gmail.com","nitutz", 0));//43 not valid column id doesnt exist
             Console.WriteLine("-----------------------\n");
             counter++;
             facade.Login("danhakatan@gmail.com", "Bb123456");
@@ -114,13 +114,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine(counter.ToString() + "." + facade.GetColumnLimit("danhakatan@gmail.com", "nitutz", 0));//43 not valid column id doesnt exist
             Console.WriteLine("-----------------------\n");
             counter++;
-            facade.LeaveBoard("naveav96@gmail.com", 1);
+            Console.WriteLine(counter + facade.JoinBoard("danhakatan@gmail.com", 1));
+            Console.WriteLine(counter.ToString() + facade.TransferOwnership("naveav95@gmail.com", "danhakatan@gmail.com", "nitutz"));
+            Console.WriteLine(counter + facade.LeaveBoard("naveav95@gmail.com", 1));
             Console.WriteLine(counter.ToString() + " Invalid get column limit");
-            Console.WriteLine(counter.ToString() + "." + facade.GetColumnLimit("naveav96@gmail.com", "nitutz", 0));//43 not valid column id doesnt exist
+            Console.WriteLine(counter.ToString() + "." + facade.GetColumnLimit("naveav95@gmail.com", "nitutz", 0));//43 not valid column id doesnt exist
             Console.WriteLine("-----------------------\n");
-            AssignTest();
-
-
         }
         private void AssignTest()
         {
@@ -204,11 +203,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine(counter.ToString() + "." + facade.AssignTask("naveav95@gmail.com", "board2", 0, 0, "miki96@gmail.com"));
             Console.WriteLine("-----------------------\n");
             Console.WriteLine(facade.AddTask("nadia97@gmail.com", "board2", "task1", "dd", new DateTime()));
+            Console.WriteLine("Invalid Advance Task User Not Assigned => "+facade.AdvanceTask("nadia97@gmail.com", "board2", 0, 0));
+            Console.WriteLine("Invalid Advance Task Owner Not Assigned => "+facade.AdvanceTask("naveav95@gmail.com", "board2", 0, 0));
+            Console.WriteLine("Invalid Assign Task Ordinal isnt correct => "+facade.AssignTask("naveav95@gmail.com", "board2", 1, 1, "nadia97@gmail.com"));
+            Console.WriteLine("Valid Assign Task => " + facade.AssignTask("naveav95@gmail.com", "board2", 0, 1, "nadia97@gmail.com"));
             Console.WriteLine(facade.AdvanceTask("nadia97@gmail.com", "board2", 0, 1));
-            Console.WriteLine(facade.AdvanceTask("naveav95@gmail.com", "board2", 0, 1));
-            Console.WriteLine(facade.AssignTask("naveav95@gmail.com", "board2", 1, 1, "nadia97@gmail.com"));
-            Console.WriteLine(facade.AdvanceTask("miki96@gmail.com", "board2", 0, 1));
-            Console.WriteLine(facade.AssignTask("miki96@gmai.com", "board2", 1, 0, "nadia97@gmail.com"));
+            Console.WriteLine("Invalid Advance Task User Not Assignee =>"+facade.AssignTask("miki96@gmail.com", "board2", 1, 1, "nadia97@gmail.com"));
             Console.WriteLine(facade.InProgressTasks("nadia97@gmail.com"));
 
 
@@ -340,11 +340,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " valid advancetask");
-            Console.WriteLine(counter.ToString() + "." + facade.AdvanceTask("naveav95@gmail.com", "nitutz", 0, 0)); //26 valid advancetask
+            Console.WriteLine(counter.ToString() + "." + facade.AdvanceTask("naveav95@gmail.com", "nitutz", 1, 0)); //26 valid advancetask
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + " not valid advancetask beacaue its already done");
-            Console.WriteLine(counter.ToString() + "." + facade.AdvanceTask("naveav95@gmail.com", "nitutz", 0, 0)); //27 not valid advancetask beacaue its allready done
+            Console.WriteLine(counter.ToString() + "." + facade.AdvanceTask("naveav95@gmail.com", "nitutz", 2, 0)); //27 not valid advancetask beacaue its allready done
             Console.WriteLine("-----------------------\n");
             counter++;
             Console.WriteLine(counter.ToString() + "not valid advancetask beacaue it doesnt exist");
@@ -369,7 +369,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             counter++;
             facade.AssignTask("naveav95@gmail.com", "nitutz", 0, 1, "naveav95@gmail.com"); //task assignment
             facade.AdvanceTask("naveav95@gmail.com", "nitutz", 0, 1);
-            facade.AdvanceTask("naveav95@gmail.com", "nitutz", 0, 1);
+            facade.AdvanceTask("naveav95@gmail.com", "nitutz", 1, 1);
             /*Console.WriteLine(counter.ToString() + " valid addtask");
             Console.WriteLine(counter.ToString() + "." + boardService.AddTask("naveav95@gmail.com", "nitutz", "Task2", "lets get this shit over with2", new DateTime()));//33
             Console.WriteLine("-----------------------\n");

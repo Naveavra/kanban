@@ -23,7 +23,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             boardUsers = new Dictionary<Board, List<string>>();
             columnMapper = ColumnMapper.Instance;
             boardMapper = BoardMapper.Instance;
-            BoardCounter = boardMapper.GetLastID();
+            BoardCounter = 0;
          /*   TaskMapper.loadData();
             columnMapper.loadData();
             boardMapper.loadData();*/
@@ -82,10 +82,18 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         
         internal int GetAndIncrement()
         {
-/*            BoardCounter = boardMapper.GetLastID();
-*/            int prev = BoardCounter;
+            int prev;
+            if (!(BoardCounter == 0))
+            {
+                BoardCounter = boardMapper.GetLastID();
+                prev = BoardCounter;
+                BoardCounter++;
+                return prev;
+            }
+            prev = BoardCounter;
             BoardCounter++;
             return prev;
+
         }
         /// <summary>
         /// assign the task for some bord memeber, if its unassigned it can be dobe by anyone
@@ -120,6 +128,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public Response GetBoard(string email,string boardname) //new function uses reponse to let us know if the board exists
         {
             //LoadData();
+            if (!boards.ContainsKey(email))
+                throw new Exception("User doesn't have boards yet");
            
             foreach (Board b in boards[email])
             {
@@ -237,13 +247,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         /// <param name="email"></param>
         /// <param name="boardName"></param>
         /// <param name="taskId"></param>
-        internal void AdvanceTask(string email, string boardName, int taskId)
+        internal void AdvanceTask(string email, string boardName,int columnOrdinal, int taskId)
         {
             Response r = GetBoard(email, boardName);
             if (!r.ErrorOccured())
             {
                 Board b = r.ReturnValue as Board;
-                b.AdvanceTask(taskId,email);
+                b.AdvanceTask(taskId,columnOrdinal,email);
             }
         }
 
@@ -339,6 +349,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             boards.Clear();
             boardUsers.Clear();
             DBConnector.Instance.RemoveTables();
+            BoardCounter = 0;
             return new Response();
         }
 
@@ -566,7 +577,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 throw new Exception("Board doesnt exist");
             }
             Board board = r.ReturnValue as Board;
-            if (!isUniqueBoardName(board.name, email))
+            if (!isUniqueBoardName(email, board.name))
                 return new Response("the user already has a board with the same name",true);
             return Add2Boards(email, ref board);
         }
