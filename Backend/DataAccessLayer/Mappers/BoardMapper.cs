@@ -16,7 +16,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         public Dictionary<string, List<BoardUserDTO>> boardUserMap { get; } //useremail,boarduserdto
         private static BoardMapper _instance = null;
         private static readonly object padlock = new object();
-        private bool loaded = false;
         public static BoardMapper Instance
         {
             get
@@ -31,14 +30,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
                 }
             }
         }
-        public bool Loaded()
-        {
-            return loaded;
-        }
-        public void setLoaded(bool pred)
-        {
-            loaded = pred;
-        }
+        
+        
         internal int GetLastID()
         {
             int ans = 0;
@@ -62,7 +55,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         public Dictionary<string, List<BoardDTO>> getBoards() { return idMap; }
         public void loadData()
         {   //if(loaded) return;
-            loaded = true;
             idMap.Clear();
             SQLiteDataReader result = conn.readData("Boards");
             string boardName="";
@@ -130,7 +122,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         public void deleteData(Dictionary<string,List<BoardDTO>> boards)
         {
-            loaded = false;
             foreach(List<BoardDTO> board in idMap.Values)
             {
                 foreach (BoardDTO boardDTO in board)

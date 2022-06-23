@@ -24,7 +24,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             SQLiteCommand cmd = conn.prepare();
 
-            cmd.CommandText = $"REPLACE INTO Users (email,password) " +
+            cmd.CommandText = $"INSERT INTO Users (email,password) " +
                     $"VALUES (@Email,@PW);";
 
             SQLiteParameter email = new SQLiteParameter(@"Email", user.email);

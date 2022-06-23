@@ -66,7 +66,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Register(string email, string password)
         {
-            email = email.ToLower();
             return facade.Register(email, password);
         }
 
@@ -79,7 +78,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the user's email, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Login(string email, string password)
         {
-            email = email.ToLower();
             return facade.Login(email, password);
         }
 
@@ -91,7 +89,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Logout(string email)
         {
-            email = email.ToLower();
             return facade.Logout(email);
         }
 
@@ -105,7 +102,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
-            email = email.ToLower();
             return facade.LimitColumn(email, boardName, columnOrdinal, limit);
         }
 
@@ -118,7 +114,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's limit, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
-            email = email.ToLower();
             return facade.GetColumnLimit(email, boardName, columnOrdinal);
         }
 
@@ -132,7 +127,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's name, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
-            email = email.ToLower();
             return facade.GetColumnName(email, boardName, columnOrdinal);
         }
 
@@ -148,7 +142,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            email = email.ToLower();
             return facade.AddTask(email, boardName, title, description, dueDate);
         }
 
@@ -164,7 +157,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
         {
-            email = email.ToLower();
             return facade.UpdateTaskDueDate(email, boardName, columnOrdinal, taskId, dueDate);
         }
 
@@ -180,7 +172,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskId, string title)
         {
-            email = email.ToLower();
             return facade.UpdateTaskTitle(email, boardName, columnOrdinal, taskId, title);
         }
 
@@ -196,7 +187,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskId, string description)
         {
-            email = email.ToLower();
             return facade.UpdateTaskDescription(email, boardName, columnOrdinal, taskId, description);
         }
 
@@ -212,7 +202,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskId)
         {
 
-            email = email.ToLower();
             return facade.AdvanceTask(email, boardName, columnOrdinal, taskId);
         }
 
@@ -226,7 +215,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
-            email = email.ToLower();
             return facade.GetColumn(email, boardName, columnOrdinal);
         }
 
@@ -253,7 +241,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string RemoveBoard(string email, string name)
         {
-            email = email.ToLower();
             return facade.RemoveBoard(email, name);
         }
 
@@ -265,7 +252,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the in-progress tasks of the user, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string InProgressTasks(string email)
         {
-            email = email.ToLower();
             return facade.InProgressTasks(email);
         }
 
@@ -276,7 +262,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of IDs of all user's boards, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetUserBoards(string email)
         {
-            email=email.ToLower();
             return facade.GetUserBoards(email);
         }
 
@@ -288,7 +273,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string JoinBoard(string email, int boardID)
         {
-            email= email.ToLower(); 
             return facade.JoinBoard(email, boardID);
         }
 
@@ -314,8 +298,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {
-            email = email.ToLower();
-            emailAssignee = emailAssignee.ToLower();
             return facade.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
         }
 

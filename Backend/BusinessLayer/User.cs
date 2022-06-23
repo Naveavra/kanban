@@ -35,12 +35,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 if (!(password == pw))
                 {
                     throw new Exception("Password is incorrect");
+                    logger.Warn("Password is incorrect. email: " + email + " has failed to login");
                     //return new Response(email);
                 }
                 logger.Info("The user " + email + " Logged In Successfully");
                 logged = true;
             }
-            logger.Warn("Password is incorrect. email: "+email+" has failed to login");
             
         }
 

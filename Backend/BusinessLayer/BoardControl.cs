@@ -100,7 +100,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
         public Response GetBoard(string email,string boardname) //new function uses reponse to let us know if the board exists
         {
-            LoadData();
+            //LoadData();
            
             foreach (Board b in boards[email])
             {
@@ -277,9 +277,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             List<Task> inprogress = new List<Task>(); 
             if (!boards.ContainsKey(email) || boards[email].Count==0)
-            {
+            { 
                 logger.Info("User doesn't have a board with that name yet");
-                throw new Exception("User doesn't have a board with that name yet.");
+                return new Response(inprogress);
             }
             foreach(Board b in boards[email])
             {
@@ -296,9 +296,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             boards.Clear();
             boardUsers.Clear();
-            boardMapper.setLoaded(false);
             DBConnector.Instance.RemoveTables();
-            return new Response("{}");
+            return new Response();
             /*Dictionary<string,List<BoardDTO>> dtos = new Dictionary<string,List<BoardDTO>>();
             Dictionary<string, List<ColumnDTO>> cols = new Dictionary<string, List<ColumnDTO>>();
             Dictionary<string, List<TaskDTO>> tsks = new Dictionary<string, List<TaskDTO>>();
@@ -432,15 +431,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 }
                 if (ids.Count == 0)
                 {
-                    return new Response("User doesnt have any boards yet",true);
+                    List<string> lst = new List<string>();
+                    return new Response(lst);
                 }
                 else
                 {
                     return new Response(ids);
                 }
             }
-                return new Response("User doesnt exist in our system",true);
-            }
+            List<string> lst1 = new List<string>();
+            return new Response(lst1);
+        }
 
         public void LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
@@ -469,8 +470,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     
         public void LoadData()
         {
-            if (boardMapper.Loaded())
-                return;
+            
             boards.Clear();
             boardUsers.Clear();
             boardMapper.loadData();

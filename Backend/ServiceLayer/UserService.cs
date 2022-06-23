@@ -88,6 +88,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         
         public bool Logged(string email)
         {
+            email = email.ToLower();
             return userControl.Logged(email);
         }
         public Response LoadData()

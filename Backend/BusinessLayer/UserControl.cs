@@ -49,7 +49,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         }
         public void Login(string email, string pw)
         {
-            LoadData();
+            //LoadData();
             //checks if a user is already logged in from the users that are logged in and not from all the users that we have on the db
             if (users.ContainsKey(email))
             {
@@ -67,16 +67,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         public void Register(string email, string pw)
         {
-            
-            LoadData();
-            validator.ValidateRegistraion(email, pw);
+ //           LoadData();
+            validator.ValidateRegistration(email, pw);
             User user = new User(email, pw);
-            //users.Add(email, user);
+            users.Add(email, user);
             userMapper.addData(new UserDTO(email, pw, false));
             logger.Info("User: " + email + ", Registered Successfully");
             Login(email, pw);
-            
-            
         }
 
         public void Logout(string email)
@@ -106,7 +103,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         internal bool Logged(string email)
         {
-            userMapper.loadData();
+            //userMapper.loadData();
             if (users.ContainsKey(email))
             {
                 return users[email].Logged();
@@ -119,7 +116,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         internal bool Registered(string email)
         {
-            userMapper.loadData();
+            email = email.ToLower();
             if (!userMapper.getUsers().ContainsKey(email))
             {
                 return false;

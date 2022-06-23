@@ -92,7 +92,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             
             bool test_regex = validateEmailRegex4.IsMatch(s);
-            if (!(validateEmailRegex.IsMatch(email) || validateEmailRegex2.IsMatch(email) || validateEmailRegex3.IsMatch(email)) || s.Count() > 64 || s1.Contains("_") || !NotContainsHebrew(email) ||test_regex|| !test_regex2)
+            if (!(validateEmailRegex.IsMatch(email) || validateEmailRegex2.IsMatch(email) || validateEmailRegex3.IsMatch(email)) || s.Count() > 64 || s1.Contains("_") || !NotContainsHebrew(email) ||test_regex|| !test_regex2 ||email.Count()==0)
                 throw new Exception("Email isn't valid");
             return validateEmailRegex.IsMatch(email);
         }
@@ -119,7 +119,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public bool UniqueEmail(string email)
         {
             UserMapper mapper = new UserMapper();
-            if (Users_Emailes.ContainsKey(email) || mapper.Contains(email))
+            if (Users_Emailes.ContainsKey(email)/* || mapper.Contains(email)*/)
                 throw new Exception("Email isn't unique.");
             return !Users_Emailes.ContainsKey(email);
         }
@@ -194,19 +194,20 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 return false;
             }
         }
-        public void ValidateRegistraion(string email, string password)
+        public void ValidateRegistration(string email, string password)
         {
             //validateEmail(email).Equals("Great Success")
-            
+
             if (validatePassword(password).Equals("Great Success") && ValidateEmailUsingRegex(email) && UniqueEmail(email) && !email.Contains(" "))
             {
-                User user =  new User(email, password);
-                Users_Emailes.Add(email,user);
+                User user = new User(email, password);
+                Users_Emailes.Add(email, user);
                 return;
             }
             throw new Exception("invalid registraion");
-            
+
         }
+
         /*internal bool Logged(string email)
         {
             if (Users_Emailes.ContainsKey(email))

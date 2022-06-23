@@ -53,7 +53,13 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return assigned;
         }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="desc"></param>
+        /// <param name="dueDate"></param>
+        /// <exception cref="Exception"></exception>
         public void AddTask(string title, string desc, DateTime dueDate) //we allready passs the validator stage in the boardservice 
         {
             Task task = new Task(title, desc, dueDate, GetAndIncrement());
@@ -88,10 +94,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             {
                 if (task.getAssignee() == email || task.getAssignee() == "")
                 {
-                    if (email == emailAssignee)
+                    /*if (email == emailAssignee)
                     {
                         return new Response("this email is already assigned for the task.", true);
-                    }
+                    }*/
                     task.setAssignee(emailAssignee);
                     return new Response();
                 }
@@ -317,7 +323,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         internal Response GetColumnLimit(int columnOrdinal)
         {
-            if(columnOrdinal>3 || columnOrdinal<0)
+            if(columnOrdinal>2 || columnOrdinal<0)
                 throw new Exception("Invalid column ordinal");
             return new Response(columns[columnOrdinal].getlimit());            
         }

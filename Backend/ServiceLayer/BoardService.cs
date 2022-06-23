@@ -57,8 +57,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 boardControl.AddBoard(email, name);
-                /*                return new Response("").Serialize();
-                */
                 return new Response().Serialize();
             }
             catch (Exception ex)
@@ -258,7 +256,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             }
             catch(Exception ex)
             {
-                return new Response(ex.Message).Serialize();
+                return new Response(ex.Message,true).Serialize();
             }
             
         }
@@ -288,7 +286,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             }
             catch (Exception ex)
             {
-                return new Response(ex.Message).Serialize();
+                return new Response(ex.Message,true).Serialize();
             }
         }
 
