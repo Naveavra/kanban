@@ -170,6 +170,17 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             
         }
 
+        internal Response GetAllBoards(string email)
+        {
+            try
+            {
+                return boardControl.GetAllBoards(email);
+            }catch(Exception ex)
+            {
+                return new Response(ex.Message,true);
+            }
+        }
+
         /// <summary>
         /// this method will remove a user's board
         /// </summary>
@@ -405,17 +416,17 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// </summary>
         /// <param name="email"></param>
         /// <returns>String that contains all of the boards's names unless an error occures.</returns>
-        public string GetBoardIDs(string email)
+        public Response GetBoardIDs(string email)
         {
             try
             {
-                string result = boardControl.GetBoardsIDs(email).Serialize();
+                Response result = boardControl.GetBoardsIDs(email);
                 logger.Info("Got Board ID's");
                 return result;
             }
             catch (Exception ex) {
                 logger.Warn(ex.Message);
-                return new Response(ex.Message, true).Serialize(); }
+                return new Response(ex.Message, true); }
 
         }
 

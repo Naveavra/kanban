@@ -33,12 +33,16 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             return JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }) ;
 
         }
+        public Response Deserialize(string json)
+        {
+            return JsonConvert.DeserializeObject<Response>(json);
+        }
         public bool ErrorOccured()
         {
             return ErrorMessage != null;
         }
 
-        internal Response Exception()
+        public Response Exception()
         {
             throw new Exception(ErrorMessage);
         }

@@ -64,10 +64,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">The user email address, used as the username for logging the system.</param>
         /// <param name="password">The user password.</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string Register(string email, string password)
+        /*public string Register(string email, string password)
         {
             return facade.Register(email, password);
-        }
+        }*/
 
 
         /// <summary>
@@ -76,10 +76,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">The email address of the user to login</param>
         /// <param name="password">The password of the user to login</param>
         /// <returns>A response with the user's email, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string Login(string email, string password)
+        /*public string Login(string email, string password)
         {
             return facade.Login(email, password);
-        }
+        }*/
 
 
         /// <summary>
@@ -260,10 +260,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// </summary>
         /// <param name="email"></param>
         /// <returns>A response with a list of IDs of all user's boards, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string GetUserBoards(string email)
+        /*public string GetUserBoards(string email)
         {
             return facade.GetUserBoards(email);
-        }
+        }*/
 
         /// <summary>
         /// This method adds a user as member to an existing board.

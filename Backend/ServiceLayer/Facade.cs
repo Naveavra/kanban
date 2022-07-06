@@ -23,6 +23,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             userService = new UserService();
             boardService = new BoardService();
+            LoadData();
+
+        }
+        public void SetUp()
+        {
+            //DeleteData();
+            LoadData();
         }
         public string Register(string email, string password)
         {
@@ -33,7 +40,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return new Response("Email can't be null",true).Serialize();
             }
             email = email.ToLower();
-            return userService.Register(email, password);
+            return userService.Register(email, password).Serialize();
         }
 
 
@@ -44,7 +51,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return new Response("Email can't be null",true).Serialize();
             }
             email = email.ToLower();
-            return userService.Login(email, password);  
+            return userService.Login(email, password).Serialize();  
         }
 
 
@@ -186,7 +193,28 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return boardService.AddBoard(email, name);
         }
 
-
+        public Response GetAllBoardNames(string email)
+        {
+            try
+            {
+                Response response = Validate(email);
+                if (response.ErrorOccured()) { return response; }
+                email = email.ToLower();
+                List<Board> boards = boardService.GetAllBoards(email).ReturnValue as List<Board>;
+                if (boards.Count == 0)
+                    return new Response("No boards yet", true);
+                List<string> names = new List<string>();
+                foreach (Board board in boards)
+                {
+                    names.Add(board.name);
+                }
+                return new Response(names);
+            }
+            catch (Exception ex)
+            {
+                return new Response(ex.Message, true);
+            }
+        }
         public string RemoveBoard(string email, string name)
         {
             Response response = Validate(email);
@@ -312,11 +340,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             userService.DeleteData();
             return new Response().Serialize();
         }
-        public string GetUserBoards(string email)
+        public Response GetUserBoards(string email)
         {
             Response r = Validate(email);
             if (r.ErrorOccured())
-                return r.Serialize();
+                return r;
             email = email.ToLower();
             return boardService.GetBoardIDs(email);
 

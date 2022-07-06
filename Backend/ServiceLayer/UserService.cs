@@ -34,19 +34,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 /*            userControl.LoadData();
 */        }
 
-        public string Register(string email, string password)
+        public Response Register(string email, string password)
         {
             string newEmail = email.ToLower();
             try
             {
                 userControl.Register(newEmail, password);
                 logger.Info($"Registered Successfully, {email}");
-                return new Response().Serialize();
+                return new Response();
 
             }catch (Exception ex)
             {
                 logger.Warn(ex.Message);
-                return new Response(ex.Message,true).Serialize();
+                return new Response(ex.Message,true);
             }
             
         }
@@ -56,18 +56,18 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email"> existing user email address.</param>
         /// <param name="password"> the user password as saved in the system. </param>
         /// <returns>response- string with the message "successfully logged in" unlees an error occures. </returns> 
-        public string Login(string email, string password)
+        public Response Login(string email, string password)
         {
             email= email.ToLower();
             try
             {
                 userControl.Login(email, password);
                 logger.Info($"Login Successfull, {email}");
-                return new Response(email).Serialize();
+                return new Response(email);
             }catch (Exception ex)
             {
                 logger.Warn(ex.Message);
-                return new Response(ex.Message,true).Serialize();
+                return new Response(ex.Message,true);
             }
             
         }

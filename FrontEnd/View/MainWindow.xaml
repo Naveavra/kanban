@@ -1,0 +1,19 @@
+﻿<Window x:Class="FrontEnd.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrontEnd"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="500">
+    <Grid Background="#FF2194ED">
+        <Label Content="Kanban Group.36" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
+        <TextBox HorizontalAlignment="Left" Margin="207,132,0,0" TextWrapping="Wrap" Text="{Binding Path=Username, Mode=TwoWay}" VerticalAlignment="Top" Width="172" Height="22"/>
+        <PasswordBox x:Name="passwordBox"  HorizontalAlignment="Left" Margin="207,173,0,0"  VerticalAlignment="Top" Width="172" Height="22"/>
+        <Label Content="Username" HorizontalAlignment="Left" Margin="92,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.561,-0.122" Width="87" FontWeight="Bold" FontStyle="Italic" FontSize="14"/>
+        <Label Content="Password" HorizontalAlignment="Left" Margin="92,171,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.561,-0.122" Width="87" FontWeight="Bold" FontStyle="Italic" FontSize="14"/>
+        <Button Content="Register" Click="Register_Click" HorizontalAlignment="Left" Margin="286,249,0,0" VerticalAlignment="Top" Width="132" BorderBrush="Black" Foreground="Black" Background="#FF65CDFF"/>
+        <Button Content="Login" Click="Login_Click" HorizontalAlignment="Left" Margin="78,249,0,0" VerticalAlignment="Top" Width="132" Background="#FF65CDFF" BorderBrush="Black" Foreground="Black"/>
+        <Label Content="{Binding Path=Message, Mode=OneWay}" Foreground="Red" HorizontalAlignment="Center" Height="69" Margin="0,274,0,0" Width="472" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FlowDirection="RightToLeft"/>
+    </Grid>
+</Window>

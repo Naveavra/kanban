@@ -175,11 +175,21 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             throw new Exception("Board doesnt exist");
         }
-/*        internal Response GetColumnForRel(string email, string boardName, int columnOrdinal)
+
+        internal Response GetAllBoards(string email)
         {
-            Board b = GetBoard(email, boardName).ReturnValue as Board;
-            return GetBoard(email, boardName).GetColumnForReal(columnOrdinal);
-        }*/
+            if (boards.ContainsKey(email))
+            {
+                return new Response(boards[email]);
+            }
+            else return new Response(new List<Board>());
+        }
+
+        /*        internal Response GetColumnForRel(string email, string boardName, int columnOrdinal)
+       {
+           Board b = GetBoard(email, boardName).ReturnValue as Board;
+           return GetBoard(email, boardName).GetColumnForReal(columnOrdinal);
+       }*/
         /// <summary>
         /// gets all the tasks in the coumn
         /// </summary>
