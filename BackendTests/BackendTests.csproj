@@ -19,5 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Backend\Backend.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<None Update ="kanban.db">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
